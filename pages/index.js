@@ -1,6 +1,8 @@
+import React, {useState, useEffect} from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
+
 import styles from '../styles/Home.module.css'
 
 const defaultEndpoint = `https://rickandmortyapi.com/api/character/`;
@@ -17,10 +19,58 @@ export async function getServerSideProps() {
 
 export default function Home({ data }) {
 
-  console.log(data)
+  const { info, results: defaultResults = [] } = data;
 
-  const { results = [] } = data;
-  console.log(results)
+  const [results, updateResults] = useState(defaultResults)
+
+  const [page, updatePage] = useState({
+    ...info,
+    current: defaultEndpoint
+  });
+
+  const {current} = page
+
+  // Using [current] as a dependency. If it changes, the hook will change
+  useEffect(() => {
+    // Prevents an extra load request if it's the initial page
+    if(current === defaultEndpoint) return;
+
+    async function request() {
+      // Request to the API endpoint
+      const res = await fetch(current)
+      const nextData = await res.json();
+
+      updatePage({
+        current, ...nextData.info
+      })
+
+      // No [previous] value means first set
+      if(!nextData.info?.prev){
+        updateResults(nextData.results)
+        return;
+      }
+
+      // Concatenate new results to the old
+      updateResults(prev => {
+        return [
+          ...prev, ...nextData.results
+        ]
+      })
+
+    }
+
+    request()
+  }, [current])
+
+  // When triggered, will update [page] with new [current] value
+  // hence, triggering hook
+  function handleLoadMore()  {
+    updatePage(prev => {
+      return {
+        ...prev, current: page?.next
+      }
+    })
+  }
 
 
   return (
@@ -61,6 +111,9 @@ export default function Home({ data }) {
 
 
         </ul>
+        <button className={styles.load} onClick={handleLoadMore}>
+          Load More
+        </button>
       </main>
 
       <footer className={styles.footer}>
