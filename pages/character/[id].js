@@ -57,7 +57,7 @@ export default function Character({ data }) {
             </section>
 
             <Link href="/">
-                <a className={styles.backLink}>&#129044; Back to home</a>
+                <a className={styles.backLink}>👈 Back to home</a>
             </Link>
         </Layout>
     );
