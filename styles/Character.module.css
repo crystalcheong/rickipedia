@@ -8,7 +8,7 @@ section.profile {
     margin-top: 3rem;
 }
 
-.title{
+.title {
     color: var(--primary);
     -webkit-text-stroke: 1px var(--secondary);
 }
