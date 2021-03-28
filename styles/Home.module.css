@@ -173,6 +173,7 @@ form.searchBox {
 .pointUp {
     border: 1px solid var(--border-accent);
     padding: 1rem;
+    background-color: white;
     transition: color 0.15s ease, border-color 0.15s ease;
 
     position: fixed;

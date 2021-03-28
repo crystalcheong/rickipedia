@@ -114,7 +114,7 @@ export default function Home({ data }) {
                                     width={200}
                                     height={200}
                                 />
-                                <h3>{name}</h3>
+                                <h2>{name}</h2>
                             </li>
                         </Link>
                     );

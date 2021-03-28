@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "npm outdated && npm run check && next dev",
-    "build": "next build && next export",
+    "build": "next build",
     "start": "npm run build && next start",
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
     "check": "npm run format && eslint --fix ."
