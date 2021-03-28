@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import PropTypes from 'prop-types';
+import { motion } from 'framer-motion';
 
 import { Layout } from '../components';
 import styles from '../styles/Home.module.css';
@@ -29,6 +30,7 @@ export default function Home({ data }) {
     });
 
     const { current } = page;
+    const [hasError, updateErrorStatus] = useState(false);
 
     // Using [current] as a dependency. If it changes, the hook will change
     useEffect(() => {
@@ -40,21 +42,28 @@ export default function Home({ data }) {
             const res = await fetch(current);
             const nextData = await res.json();
 
-            updatePage({
-                current,
-                ...nextData.info
-            });
+            if (!nextData?.error) {
+                updateErrorStatus(false);
 
-            // No [previous] value means first set
-            if (!nextData.info?.prev) {
-                updateResults(nextData.results);
-                return;
+                updatePage({
+                    current,
+                    ...nextData.info
+                });
+
+                // No [previous] value means first set
+                if (!nextData.info?.prev) {
+                    updateResults(nextData.results);
+                    return;
+                }
+
+                // Concatenate new results to the old
+                updateResults((prev) => {
+                    return [...prev, ...nextData.results];
+                });
             }
-
-            // Concatenate new results to the old
-            updateResults((prev) => {
-                return [...prev, ...nextData.results];
-            });
+            else {
+                updateErrorStatus(true);
+            }
         }
 
         request();
@@ -88,11 +97,29 @@ export default function Home({ data }) {
         });
     }
 
+
+
     return (
         <Layout>
-            <h1 className={styles.title}>
+            <motion.h1
+                initial="hidden"
+                animate="visible"
+                variants={{
+                    hidden: {
+                        scale: 0.8,
+                        opacity: 0
+                    },
+                    visible: {
+                        scale: 1,
+                        opacity: 1,
+                        transition: {
+                            delay: 0.4
+                        }
+                    }
+                }}
+                className={styles.title}>
                 Wubba Lubba <span>Dub Dub!</span>
-            </h1>
+            </motion.h1>
 
             <p className={styles.description}>Rick and Morty Character Wiki</p>
 
@@ -101,28 +128,71 @@ export default function Home({ data }) {
                 <button>Search</button>
             </form>
 
-            <ul className={styles.grid}>
-                {results.map((result) => {
-                    const { id, name, image } = result;
+            {
+                hasError
+                    ? <motion.h2 initial="hidden"
+                    animate="visible"
+                    variants={{
+                        hidden: {
+                            scale: 0.8,
+                            opacity: 0
+                        },
+                        visible: {
+                            scale: 1,
+                            opacity: 1,
+                            transition: {
+                                delay: 0.4
+                            }
+                        }
+                    }}
+                    className={styles.errorMsg}>
+                        Can't find this in any dimensions
+                        </motion.h2>
+                    : (
+                        <section>
+                            <ul className={styles.grid}>
+                                {results.map((result) => {
+                                    const { id, name, image } = result;
 
-                    return (
-                        <Link href="/character/[id]" as={`/character/${id}`} passHref key={id}>
-                            <li className={styles.card}>
-                                <Image
-                                    src={image}
-                                    alt={`${name} Thumbnail`}
-                                    width={200}
-                                    height={200}
-                                />
-                                <h2>{name}</h2>
-                            </li>
-                        </Link>
-                    );
-                })}
-            </ul>
-            <button className={styles.load} onClick={handleLoadMore}>
-                Load More
-            </button>
+                                    return (
+                                        <Link href="/character/[id]" as={`/character/${id}`} passHref key={id}>
+                                            <motion.li
+                                                className={styles.card}
+                                                whileHover={{
+                                                    position: 'relative',
+                                                    zIndex: 1,
+                                                    background: 'white',
+                                                    scale: [1, 1.4, 1.2],
+                                                    rotate: [0, 10, -10, 0],
+                                                    transition: {
+                                                        duration: 0.2
+                                                    },
+                                                    filter: [
+                                                        'hue-rotate(0) contrast(100%)',
+                                                        'hue-rotate(360deg) contrast(200%)',
+                                                        'hue-rotate(45deg) contrast(300%)',
+                                                        'hue-rotate(0) contrast(100%)'
+                                                    ]
+                                                }}>
+                                                <Image
+                                                    src={image}
+                                                    alt={`${name} Thumbnail`}
+                                                    width={200}
+                                                    height={200}
+                                                />
+                                                <h2>{name}</h2>
+                                            </motion.li>
+                                        </Link>
+                                    );
+                                })}
+                            </ul>
+                            <button className={styles.load} onClick={handleLoadMore}>
+                                Load More
+                            </button>
+                        </section>
+                    )
+            }
+
 
             <Link href="/" passHref>
                 <div className={styles.pointUp}>👆</div>
