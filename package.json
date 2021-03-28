@@ -25,5 +25,6 @@
     "prettier": "latest",
     "prop-types": "latest",
     "webpack": "latest"
-  }
+  },
+  "license": "MIT"
 }
