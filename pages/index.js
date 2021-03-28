@@ -3,6 +3,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
 
+import { Layout } from '../components'
 import styles from '../styles/Home.module.css'
 
 const defaultEndpoint = `https://rickandmortyapi.com/api/character/`;
@@ -75,7 +76,9 @@ export default function Home({ data }) {
   function handleSearchSubmit(e) {
     e.preventDefault()
 
+    // Current target = form
     const { currentTarget = {} } = e;
+    // Retrieving all elements in [currentTarget]
     const fields = Array.from(currentTarget?.elements);
     const fieldQuery = fields.find(field => field.name === 'query')
 
@@ -89,58 +92,53 @@ export default function Home({ data }) {
 
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Rickipedia</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Wubba Lubba <span>Dub Dub!</span>
-        </h1>
+    <Layout>
+      <h1 className={styles.title}>
+        Wubba Lubba <span>Dub Dub!</span>
+      </h1>
 
-        <p className={styles.description}>
-          Rick and Morty Character Wiki
+      <p className={styles.description}>
+        Rick and Morty Character Wiki
         </p>
 
-        <form className={styles.searchBox} onSubmit={handleSearchSubmit}>
-          <input name="query" type="search" placeholder="wubba lubba dub dub" />
-          <button>Search</button>
-        </form>
+      <form className={styles.searchBox} onSubmit={handleSearchSubmit}>
+        <input name="query" type="search" placeholder="wubba lubba dub dub" />
+        <button>Search</button>
+      </form>
 
-        <ul className={styles.grid}>
+      <ul className={styles.grid}>
 
-          {
-            results.map((result) => {
-              const { id, name, image } = result;
+        {
+          results.map((result) => {
+            const { id, name, image } = result;
 
-              return <Link href={`#${name.replace(/\s+/g, '')}`} passHref key={id}>
-                <li className={styles.card}>
-                  <Image
-                    src={image}
-                    alt={`${name} Thumbnail`}
-                    width={200}
-                    height={200}
-                  />
-                  <h3>{name}</h3>
-                </li>
-              </Link>
-            })
-          }
+            return <Link href="/character/[id]" as={`/character/${id}`} passHref key={id}>
+              <li className={styles.card}>
+                <Image
+                  src={image}
+                  alt={`${name} Thumbnail`}
+                  width={200}
+                  height={200}
+                />
+                <h3>{name}</h3>
+              </li>
+            </Link>
+          })
+        }
 
 
-        </ul>
-        <button className={styles.load} onClick={handleLoadMore}>
-          Load More
+      </ul>
+      <button className={styles.load} onClick={handleLoadMore}>
+        Load More
         </button>
-      </main>
 
-      <footer className={styles.footer}>
-        <Link href="https://www.adultswim.com/" passHref>
-          <img src="/adult-swim.svg" alt="Vercel Logo" className={styles.logo} />
-        </Link>
-      </footer>
-    </div>
+      <Link href="/" passHref>
+        <div className={styles.pointUp}>
+          👆
+        </div>
+      </Link>
+    </Layout>
+
   )
 }
