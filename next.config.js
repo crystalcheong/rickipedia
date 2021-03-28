@@ -1,5 +1,5 @@
 module.exports = {
     images: {
-      domains: ['rickandmortyapi.com'],
-    },
-  }
+        domains: ['rickandmortyapi.com']
+    }
+};

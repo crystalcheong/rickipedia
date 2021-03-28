@@ -1,0 +1,15 @@
+next.config.js
+jsconfig.json
+
+out
+public
+
+.next
+node_modules
+
+.babelrc
+.eslintignore
+.eslintrc.js
+.gitignore
+.prettierignore
+.prettierrc

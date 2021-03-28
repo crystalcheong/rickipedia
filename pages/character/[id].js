@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import Head from 'next/head'
-import Link from 'next/link'
-import Image from 'next/image'
+import React from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import PropTypes from 'prop-types';
 
-import { Layout } from '../../components'
-import styles from '../../styles/Character.module.css'
+import { Layout } from '../../components';
+import styles from '../../styles/Character.module.css';
 
 const defaultEndpoint = `https://rickandmortyapi.com/api/character/`;
 
@@ -12,12 +12,12 @@ export async function getServerSideProps({ query }) {
     const { id } = query;
 
     const res = await fetch(`${defaultEndpoint}${id}`);
-    const data = await res.json()
+    const data = await res.json();
     return {
         props: {
             data
         }
-    }
+    };
 }
 
 export default function Character({ data }) {
@@ -26,34 +26,43 @@ export default function Character({ data }) {
 
     return (
         <Layout title={name}>
-            <h1 className={styles.title}>
-                {name}
-            </h1>
+            <h1 className={styles.title}>{name}</h1>
 
             <section className={styles.profile}>
-            <Image
+                <Image
                     src={image}
                     alt={`${name} Thumbnail`}
                     width={200}
                     height={200}
                     className={styles.profileImg}
-                  />
+                />
 
-                  <div className={styles.info}>
-                      <p><span>Gender</span>:&emsp;{gender}</p>
-                      <p><span>Status</span>:&emsp;{status}</p>
-                      <p><span>Originally from</span>:&emsp;{origin.name}</p>
-                      <p><span>Location</span>:&emsp;{location.name}</p>
-                  </div>
-
-
+                <div className={styles.info}>
+                    <p>
+                        <span>Gender</span>:&emsp;{gender}
+                    </p>
+                    <p>
+                        <span>Species</span>:&emsp;{species}
+                    </p>
+                    <p>
+                        <span>Status</span>:&emsp;{status}
+                    </p>
+                    <p>
+                        <span>Originally from</span>:&emsp;{origin.name}
+                    </p>
+                    <p>
+                        <span>Location</span>:&emsp;{location.name}
+                    </p>
+                </div>
             </section>
 
             <Link href="/">
-                <a className={styles.backLink}> 	
-&#129044; Back to home</a>
+                <a className={styles.backLink}>&#129044; Back to home</a>
             </Link>
-
         </Layout>
-    )
+    );
 }
+
+Character.propTypes = {
+    data: PropTypes.object
+};

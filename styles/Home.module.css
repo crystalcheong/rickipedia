@@ -1,191 +1,187 @@
 .title a {
-  color: var(--primary);
-  text-decoration: none;
+    color: var(--primary);
+    text-decoration: none;
 }
 
 .title a:hover,
 .title a:focus,
 .title a:active {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
 .title {
-  margin: 0;
-  line-height: 1.15;
-  font-size: 4rem;
+    margin: 0;
+    line-height: 1.15;
+    font-size: 4rem;
 }
 
-.title > span{
-  display: inline-block;
-  color: var(--primary);
+.title > span {
+    display: inline-block;
+    color: var(--primary);
 }
 
 .title,
 .description {
-  text-align: center;
+    text-align: center;
 }
 
 .description {
-  line-height: 1.5;
-  font-size: 1.5rem;
+    line-height: 1.5;
+    font-size: 1.5rem;
 }
 
 .code {
-  background: #fafafa;
-  border-radius: 5px;
-  padding: 0.75rem;
-  font-size: 1.1rem;
-  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-    Bitstream Vera Sans Mono, Courier New, monospace;
+    background: #fafafa;
+    border-radius: 5px;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+        Bitstream Vera Sans Mono, Courier New, monospace;
 }
 
 .grid {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 800px;
-  margin-top: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 800px;
+    margin-top: 3rem;
 
-  list-style: none;
-margin-left: 0;
-padding-left: 0;
-
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
 }
 
 .card {
-  margin: 1rem;
-  flex-basis: 45%;
-  padding: 1.5rem;
-  text-align: left;
-  color: inherit;
-  text-decoration: none;
-  border: 1px solid var(--border-accent);
-  border-radius: 10px;
-  transition: color 0.15s ease, border-color 0.15s ease;
+    margin: 1rem;
+    flex-basis: 45%;
+    padding: 1.5rem;
+    text-align: left;
+    color: inherit;
+    text-decoration: none;
+    border: 1px solid var(--border-accent);
+    border-radius: 10px;
+    transition: color 0.15s ease, border-color 0.15s ease;
 
-  display: inline-flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .card:hover,
 .card:focus,
 .card:active {
-  color:var(--primary);
-  border-color: var(--primary);
+    color: var(--primary);
+    border-color: var(--primary);
 }
 
 .card h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1.5rem;
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
 }
 
 .card p {
-  margin: 0;
-  font-size: 1.25rem;
-  line-height: 1.5;
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.5;
 }
 
+.load {
+    width: 50%;
+    text-transform: uppercase;
 
-
-.load{
-  width: 50%;
-  text-transform: uppercase;
-
-  border: 1px solid var(--border-accent);
-  border-radius: 10px;
-  padding: 1.5rem;
-  margin: 1rem;
-  transition: color 0.15s ease, border-color 0.15s ease;
-  color: inherit;
-  font-weight: bold;
-  background-color: inherit;
+    border: 1px solid var(--border-accent);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1rem;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    color: inherit;
+    font-weight: bold;
+    background-color: inherit;
 }
 
 .load:hover,
 .load:focus,
 .load:active {
-  color:var(--primary);
-  border-color: var(--primary);
+    color: var(--primary);
+    border-color: var(--primary);
 }
 
 form.searchBox {
-  /* border:.1px solid red; */
-  width: 50%;
-  /* padding: 2rem; */
+    /* border:.1px solid red; */
+    width: 50%;
+    /* padding: 2rem; */
 
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-  align-content: center;
-  /* align-items: center; */
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-content: center;
+    /* align-items: center; */
 }
 
-.searchBox > input{
-  /* background-color: green; */
+.searchBox > input {
+    /* background-color: green; */
 
-  flex: .8;
-	background: none;
-  outline:none;
-  border:none;
-	border-bottom: 1px solid var(--border-accent);
-  color: var(--primary);
+    flex: 0.8;
+    background: none;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid var(--border-accent);
+    color: var(--primary);
 }
 
 .searchBox > input:focus,
 .searchBox > input:valid,
-.searchBox > input:not(:placeholder-shown){
-  outline: none;
-	border-bottom: 3px solid var(--primary);
+.searchBox > input:not(:placeholder-shown) {
+    outline: none;
+    border-bottom: 3px solid var(--primary);
 }
 
-.searchBox > button{
-  flex: .3;
+.searchBox > button {
+    flex: 0.3;
 
-  text-transform: uppercase;
+    text-transform: uppercase;
 
-  border: 1px solid var(--border-accent);
-  border-radius: 10px;
-  padding: 1rem;
-  margin-left: .5rem;
-  transition: color 0.15s ease, border-color 0.15s ease;
-  color: inherit;
-  font-weight: bold;
-  background-color: inherit;
+    border: 1px solid var(--border-accent);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-left: 0.5rem;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    color: inherit;
+    font-weight: bold;
+    background-color: inherit;
 }
 
 .searchBox > button:hover,
 .searchBox > button:focus,
 .searchBox > button:active {
-  color:white;
-  background-color: var(--primary);
-  border-color: var(--primary);
+    color: white;
+    background-color: var(--primary);
+    border-color: var(--primary);
 }
 
 @media (max-width: 600px) {
-  .grid {
-    width: 100%;
-    flex-direction: column;
-  }
+    .grid {
+        width: 100%;
+        flex-direction: column;
+    }
 }
 
-.pointUp{
-  border: 1px solid var(--border-accent);
-  padding: 1rem;
-  transition: color 0.15s ease, border-color 0.15s ease;
+.pointUp {
+    border: 1px solid var(--border-accent);
+    padding: 1rem;
+    transition: color 0.15s ease, border-color 0.15s ease;
 
-  position: fixed;
-  bottom: 3%;
-  right: 5%;
+    position: fixed;
+    bottom: 3%;
+    right: 5%;
 }
 
 .pointUp:hover,
 .pointUp:focus,
 .pointUp:active {
-  border-color: var(--primary);
+    border-color: var(--primary);
 }
