@@ -1,6 +1,6 @@
-<div align="center">
+<p align="center">
   <img alt="Logo" src="https://github.com/crystalcheong/Rickipedia/blob/main/public/icons/favicon.ico" width="30" />
-</div>
+</p>
  
 <h3 align="center">
   Rickipedia
