@@ -60,8 +60,7 @@ export default function Home({ data }) {
                 updateResults((prev) => {
                     return [...prev, ...nextData.results];
                 });
-            }
-            else {
+            } else {
                 updateErrorStatus(true);
             }
         }
@@ -97,8 +96,6 @@ export default function Home({ data }) {
         });
     }
 
-
-
     return (
         <Layout>
             <motion.h1
@@ -128,9 +125,9 @@ export default function Home({ data }) {
                 <button>Search</button>
             </form>
 
-            {
-                hasError
-                    ? <motion.h2 initial="hidden"
+            {hasError ? (
+                <motion.h2
+                    initial="hidden"
                     animate="visible"
                     variants={{
                         hidden: {
@@ -146,53 +143,55 @@ export default function Home({ data }) {
                         }
                     }}
                     className={styles.errorMsg}>
-                        Can't find this in any dimensions
-                        </motion.h2>
-                    : (
-                        <section>
-                            <ul className={styles.grid}>
-                                {results.map((result) => {
-                                    const { id, name, image } = result;
+                    Can&#39;t find this in any dimensions
+                </motion.h2>
+            ) : (
+                <>
+                    <ul className={styles.grid}>
+                        {results.map((result) => {
+                            const { id, name, image } = result;
 
-                                    return (
-                                        <Link href="/character/[id]" as={`/character/${id}`} passHref key={id}>
-                                            <motion.li
-                                                className={styles.card}
-                                                whileHover={{
-                                                    position: 'relative',
-                                                    zIndex: 1,
-                                                    background: 'white',
-                                                    scale: [1, 1.4, 1.2],
-                                                    rotate: [0, 10, -10, 0],
-                                                    transition: {
-                                                        duration: 0.2
-                                                    },
-                                                    filter: [
-                                                        'hue-rotate(0) contrast(100%)',
-                                                        'hue-rotate(360deg) contrast(200%)',
-                                                        'hue-rotate(45deg) contrast(300%)',
-                                                        'hue-rotate(0) contrast(100%)'
-                                                    ]
-                                                }}>
-                                                <Image
-                                                    src={image}
-                                                    alt={`${name} Thumbnail`}
-                                                    width={200}
-                                                    height={200}
-                                                />
-                                                <h2>{name}</h2>
-                                            </motion.li>
-                                        </Link>
-                                    );
-                                })}
-                            </ul>
-                            <button className={styles.load} onClick={handleLoadMore}>
-                                Load More
-                            </button>
-                        </section>
-                    )
-            }
-
+                            return (
+                                <Link
+                                    href="/character/[id]"
+                                    as={`/character/${id}`}
+                                    passHref
+                                    key={id}>
+                                    <motion.li
+                                        className={styles.card}
+                                        whileHover={{
+                                            position: 'relative',
+                                            zIndex: 1,
+                                            background: 'white',
+                                            scale: [1, 1.4, 1.2],
+                                            rotate: [0, 10, -10, 0],
+                                            transition: {
+                                                duration: 0.2
+                                            },
+                                            filter: [
+                                                'hue-rotate(0) contrast(100%)',
+                                                'hue-rotate(360deg) contrast(200%)',
+                                                'hue-rotate(45deg) contrast(300%)',
+                                                'hue-rotate(0) contrast(100%)'
+                                            ]
+                                        }}>
+                                        <Image
+                                            src={image}
+                                            alt={`${name} Thumbnail`}
+                                            width={200}
+                                            height={200}
+                                        />
+                                        <h2>{name}</h2>
+                                    </motion.li>
+                                </Link>
+                            );
+                        })}
+                    </ul>
+                    <button className={styles.load} onClick={handleLoadMore}>
+                        Load More
+                    </button>
+                </>
+            )}
 
             <Link href="/" passHref>
                 <div className={styles.pointUp}>👆</div>

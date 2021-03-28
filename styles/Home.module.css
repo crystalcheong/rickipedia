@@ -39,7 +39,7 @@
         Bitstream Vera Sans Mono, Courier New, monospace;
 }
 
-.errorMsg{
+.errorMsg {
     margin-top: 3rem;
     line-height: 1.15;
     font-style: italic;
@@ -139,14 +139,14 @@ form.searchBox {
     outline: none;
     border: none;
     border-bottom: 1px solid var(--border-accent);
-    color: var(--primary);
+    color: var(--secondary);
 }
 
 .searchBox > input:focus,
 .searchBox > input:valid,
 .searchBox > input:not(:placeholder-shown) {
     outline: none;
-    border-bottom: 3px solid var(--primary);
+    border-bottom: 3px solid var(--secondary);
 }
 
 .searchBox > button {
@@ -169,7 +169,7 @@ form.searchBox {
 .searchBox > button:active {
     color: white;
     background-color: var(--primary);
-    border-color: var(--primary);
+    border-color: var(--secondary);
 }
 
 @media (max-width: 600px) {

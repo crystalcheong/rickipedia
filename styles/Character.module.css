@@ -8,6 +8,11 @@ section.profile {
     margin-top: 3rem;
 }
 
+.title{
+    color: var(--primary);
+    -webkit-text-stroke: 1px var(--secondary);
+}
+
 .profileImg {
     border: 1px solid var(--border-accent);
     border-radius: 10px;
