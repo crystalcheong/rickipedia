@@ -21,6 +21,7 @@
     "eslint-plugin-prettier": "latest",
     "eslint-plugin-react": "latest",
     "eslint-plugin-react-hooks": "latest",
+    "next-pwa": "latest",
     "prettier": "latest",
     "prop-types": "latest",
     "webpack": "latest"

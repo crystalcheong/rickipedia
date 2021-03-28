@@ -24,7 +24,7 @@ export default function Layout({ title, children }) {
             }}>
             <Head>
                 <title>{pageName}</title>
-                <link rel="icon" href="/favicon.ico" />
+                <link rel="icon" href="/icons/favicon.ico" />
             </Head>
 
             <main>{children}</main>
