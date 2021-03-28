@@ -1,5 +1,5 @@
 <div align="center">
-  <img alt="Logo" src="https://github.com/crystalcheong/Rickipedia/blob/main/public/favicon.ico" width="30" />
+  <img alt="Logo" src="https://github.com/crystalcheong/Rickipedia/blob/main/public/icons/favicon.ico" width="30" />
 </div>
  
 <h3 align="center">
