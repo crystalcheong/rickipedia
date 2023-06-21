@@ -1,14 +1,18 @@
+import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
 import { useState } from "react"
 
-import CharacterDetail from "@/components/Character.Detail"
-import EpisodeTable from "@/components/Episode.Table"
 import BaseLayout from "@/components/layouts/Layout.Base"
-import LocationCard from "@/components/Location.Card"
 import { RenderGuard } from "@/components/providers"
 import { Badge } from "@/components/ui/Badge"
 import { type Character, RickAndMorty } from "@/data/clients/rickAndMorty"
 import { api, cn, getUniqueSetList } from "@/utils"
+
+const CharacterDetail = dynamic(
+  () => import("../../components/Character.Detail")
+)
+const EpisodeTable = dynamic(() => import("../../components/Episode.Table"))
+const LocationCard = dynamic(() => import("../../components/Location.Card"))
 
 const CharacterIdPage = () => {
   const router = useRouter()
@@ -78,7 +82,12 @@ const CharacterIdPage = () => {
   //#endregion  //*======== QUERIES ===========
 
   return (
-    <BaseLayout className={cn("flex flex-col place-items-center gap-16")}>
+    <BaseLayout
+      className={cn("flex flex-col place-items-center gap-16")}
+      seo={{
+        title: charactersData.map(({ name }) => name).toString(),
+      }}
+    >
       <RenderGuard renderIf={!!charactersData.length}>
         <main className={cn("flex flex-col gap-24")}>
           {charactersData.map((character) => (

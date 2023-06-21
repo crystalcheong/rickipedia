@@ -22,7 +22,7 @@ const ThemeSwitch = () => {
   return (
     <RenderGuard renderIf={!!theme}>
       <DropdownMenu>
-        <DropdownMenuTrigger>
+        <DropdownMenuTrigger aria-label="theme-switch button">
           {ThemeModes[theme ?? "system"]}
         </DropdownMenuTrigger>
         <DropdownMenuContent>

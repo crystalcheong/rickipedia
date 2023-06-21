@@ -1,12 +1,14 @@
+import dynamic from "next/dynamic"
 import { type ReactNode, useState } from "react"
 
-import CharacterSearch from "@/components/Character.Search"
-import EpisodeSearch from "@/components/Episode.Search"
 import BaseLayout from "@/components/layouts/Layout.Base"
-import LocationSearch from "@/components/Location.Search"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs"
 import { cn } from "@/utils"
 import RickAndMorty from "~/assets/RickAndMorty.svg"
+
+const CharacterSearch = dynamic(() => import("../components/Character.Search"))
+const EpisodeSearch = dynamic(() => import("../components/Episode.Search"))
+const LocationSearch = dynamic(() => import("../components/Location.Search"))
 
 export const SearchTabs: Record<string, ReactNode> = {
   characters: <CharacterSearch />,

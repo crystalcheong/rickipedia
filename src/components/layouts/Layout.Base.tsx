@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { NextSeo, type NextSeoProps } from "next-seo"
 import {
   type ComponentProps,
   type FC,
@@ -55,16 +56,19 @@ export const SlimePortal: FC<SlimePortalProps> = ({
 
 interface Props extends ComponentProps<"main"> {
   showPortal?: boolean
+  seo?: Partial<NextSeoProps>
 }
 
 const BaseLayout = ({
   showPortal = true,
   children,
   className,
+  seo,
   ...rest
 }: Props) => {
   return (
     <>
+      <NextSeo {...seo} />
       <header
         className={cn("sticky top-0 z-40", "bg-background/80 backdrop-blur-md")}
       >
@@ -118,7 +122,7 @@ const BaseLayout = ({
               <Link
                 key={`footer-route-${route.label}`}
                 href={route.href}
-                className="hover:slime text-sm text-muted-foreground hover:bg-clip-text hover:text-transparent"
+                className="hover:slime text-muted-foreground hover:bg-clip-text hover:text-transparent sm:text-sm"
               >
                 {route.label}
               </Link>
