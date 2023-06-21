@@ -8,11 +8,11 @@ import {
   useState,
 } from "react"
 
+import Logo from "@/components/Logo"
 import { ErrorBoundary } from "@/components/providers"
 import ThemeSwitch from "@/components/Theme.Switch"
 import { NextImage } from "@/components/ui"
 import { AppRoutes } from "@/data/static"
-import { AppName } from "@/data/static/app"
 import { cn } from "@/utils"
 
 interface SlimePortalProps extends PropsWithChildren {
@@ -79,24 +79,7 @@ const BaseLayout = ({
             "py-4"
           )}
         >
-          <Link href="/">
-            <NextImage
-              isPriority
-              useSkeleton
-              src={"/assets/Logo.png"}
-              alt={"logo"}
-              width={500}
-              height={500}
-              className={cn(
-                "object-cover object-left-top",
-                "relative",
-                "my-0 mt-auto",
-                "h-12 w-full",
-                "rounded-full",
-                "shadow-lg shadow-green-500/50 hover:shadow-sm"
-              )}
-            />
-          </Link>
+          <Logo variant="image" />
           <ThemeSwitch />
         </nav>
       </header>
@@ -115,7 +98,7 @@ const BaseLayout = ({
       </main>
       <footer className={cn("border-t")}>
         <main className={cn("mx-auto w-10/12", "py-4", "flex flex-col gap-4")}>
-          <h4 className="slime bg-clip-text text-transparent">{AppName}</h4>
+          <Logo />
 
           <aside className="flex flex-col gap-2 sm:flex-row">
             {AppRoutes.map((route) => (
