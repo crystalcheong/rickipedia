@@ -16,6 +16,6 @@ export const AppRoutes: (Route & {
   },
   {
     label: "Locations",
-    href: "/locations",
+    href: "/location",
   },
 ]

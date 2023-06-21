@@ -9,7 +9,7 @@ const App: AppType = ({ Component, pageProps }) => {
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="system"
+      defaultTheme="dark"
       enableSystem
     >
       <Component {...pageProps} />

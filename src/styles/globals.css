@@ -122,4 +122,7 @@
   .slime {
     @apply bg-gradient-to-br from-[#C5DD5E] to-[#8CE261];
   }
+  .slimer {
+    @apply bg-gradient-to-br from-[#1A9F45] to-[#8CE261];
+  }
 }

@@ -19,7 +19,7 @@
     "format": "prettier -w .",
     "format:check": "prettier -c .",
     "prepare": "husky install",
-    "release": "-s standard-version"
+    "release": "standard-version --sign"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",
@@ -57,6 +57,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.6.5",
     "@commitlint/config-conventional": "^17.6.5",
+    "@svgr/webpack": "^8.0.1",
     "@types/eslint": "^8.37.0",
     "@types/node": "^18.16.0",
     "@types/prettier": "^2.7.2",

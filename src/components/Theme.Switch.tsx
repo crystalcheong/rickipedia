@@ -9,7 +9,7 @@ import { Laptop2, Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { type ReactNode } from "react"
 
-import RenderGuard from "@/components/providers/RenderGuard"
+import { RenderGuard } from "@/components/providers"
 
 const ThemeModes: Record<string, ReactNode> = {
   light: <Sun className="h-12" />,
