@@ -1,5 +1,11 @@
 import Link from "next/link"
-import { type ComponentProps } from "react"
+import {
+  type ComponentProps,
+  type FC,
+  type PropsWithChildren,
+  useEffect,
+  useState,
+} from "react"
 
 import { ErrorBoundary } from "@/components/providers"
 import ThemeSwitch from "@/components/Theme.Switch"
@@ -8,9 +14,55 @@ import { AppRoutes } from "@/data/static"
 import { AppName } from "@/data/static/app"
 import { cn } from "@/utils"
 
-type Props = ComponentProps<"main">
+interface SlimePortalProps extends PropsWithChildren {
+  show?: boolean
+}
 
-const BaseLayout = ({ children, className, ...rest }: Props) => {
+export const SlimePortal: FC<SlimePortalProps> = ({
+  children,
+  show = false,
+}: SlimePortalProps) => {
+  const [showPortal, setShowPortal] = useState<boolean>(show)
+
+  useEffect(() => {
+    setTimeout(function () {
+      setShowPortal(false)
+    }, 500)
+  }, [])
+
+  return (
+    <>
+      {showPortal ? (
+        <NextImage
+          isPriority
+          useSkeleton
+          src={"/assets/Portal.gif"}
+          alt={"logo"}
+          width={500}
+          height={500}
+          className={cn(
+            "relative",
+            "m-auto !w-[50vh]",
+            "transition-all	ease-in-out hover:scale-150"
+          )}
+        />
+      ) : (
+        children
+      )}
+    </>
+  )
+}
+
+interface Props extends ComponentProps<"main"> {
+  showPortal?: boolean
+}
+
+const BaseLayout = ({
+  showPortal = true,
+  children,
+  className,
+  ...rest
+}: Props) => {
   return (
     <>
       <header
@@ -53,7 +105,9 @@ const BaseLayout = ({ children, className, ...rest }: Props) => {
         )}
         {...rest}
       >
-        <ErrorBoundary>{children}</ErrorBoundary>
+        <SlimePortal show={showPortal}>
+          <ErrorBoundary>{children}</ErrorBoundary>
+        </SlimePortal>
       </main>
       <footer className={cn("border-t")}>
         <main className={cn("mx-auto w-10/12", "py-4", "flex flex-col gap-4")}>
