@@ -10,7 +10,7 @@ const CharacterSearch = dynamic(
 const CharactersPage = () => {
   return (
     <BaseLayout
-      className={cn("flex flex-col gap-16")}
+      className={cn("flex flex-col gap-16", "relative")}
       seo={{
         title: "Characters",
       }}

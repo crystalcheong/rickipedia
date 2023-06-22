@@ -1,21 +1,5 @@
-export interface Route {
-  label: string
-  href: string
+export const AppRoutes = {
+  Home: "/",
+  Characters: "/character",
+  Locations: "/location",
 }
-
-export const AppRoutes: (Route & {
-  nodes?: Route[]
-})[] = [
-  {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Characters",
-    href: "/character",
-  },
-  {
-    label: "Locations",
-    href: "/location",
-  },
-]

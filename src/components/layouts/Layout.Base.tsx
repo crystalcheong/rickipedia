@@ -9,7 +9,7 @@ import {
 } from "react"
 
 import Logo from "@/components/Logo"
-import { ErrorBoundary } from "@/components/providers"
+import { RenderGuard } from "@/components/providers"
 import ThemeSwitch from "@/components/Theme.Switch"
 import { NextImage } from "@/components/ui"
 import { AppRoutes } from "@/data/static"
@@ -44,7 +44,7 @@ export const SlimePortal: FC<SlimePortalProps> = ({
           className={cn(
             "relative",
             "m-auto !w-[50vh]",
-            "transition-all	ease-in-out hover:scale-150"
+            "animate-rotateIn transition-all ease-in-out hover:scale-150"
           )}
         />
       ) : (
@@ -54,7 +54,7 @@ export const SlimePortal: FC<SlimePortalProps> = ({
   )
 }
 
-interface Props extends ComponentProps<"main"> {
+export interface BaseLayoutProps extends ComponentProps<"main"> {
   showPortal?: boolean
   seo?: Partial<NextSeoProps>
 }
@@ -65,7 +65,7 @@ const BaseLayout = ({
   className,
   seo,
   ...rest
-}: Props) => {
+}: BaseLayoutProps) => {
   return (
     <>
       <NextSeo {...seo} />
@@ -93,7 +93,7 @@ const BaseLayout = ({
         {...rest}
       >
         <SlimePortal show={showPortal}>
-          <ErrorBoundary>{children}</ErrorBoundary>
+          <RenderGuard>{children}</RenderGuard>
         </SlimePortal>
       </main>
       <footer className={cn("border-t")}>
@@ -101,13 +101,13 @@ const BaseLayout = ({
           <Logo />
 
           <aside className="flex flex-col gap-2 sm:flex-row">
-            {AppRoutes.map((route) => (
+            {Object.entries(AppRoutes).map(([route, href]) => (
               <Link
-                key={`footer-route-${route.label}`}
-                href={route.href}
+                key={`footer-route-${route}`}
+                href={href}
                 className="hover:slime text-muted-foreground hover:bg-clip-text hover:text-transparent sm:text-sm"
               >
-                {route.label}
+                {route}
               </Link>
             ))}
           </aside>

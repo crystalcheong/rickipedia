@@ -1,8 +1,8 @@
-import Link from "next/link"
-import { env } from "process"
+import { useRouter } from "next/router"
 
 import { Badge, NextImage } from "@/components/ui"
 import { AppName } from "@/data/static/app"
+import { env } from "@/env.mjs"
 import { cn } from "@/utils"
 
 interface LogoProps {
@@ -10,9 +10,10 @@ interface LogoProps {
 }
 
 export const Logo = ({ variant = "text" }: LogoProps) => {
+  const router = useRouter()
   return (
-    <Link
-      href="/"
+    <div
+      onClick={() => void router.push("/")}
       className="inline-flex flex-row place-items-center gap-2"
     >
       {variant === "image" && (
@@ -48,7 +49,7 @@ export const Logo = ({ variant = "text" }: LogoProps) => {
           Beta
         </Badge>
       )}
-    </Link>
+    </div>
   )
 }
 

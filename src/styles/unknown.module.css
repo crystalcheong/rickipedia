@@ -1,0 +1,44 @@
+/* #region  /**===========  =========== */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+@keyframes rotateIn {
+  from {
+    transform: rotate(0deg) scale(0.2);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(360deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.errCode span {
+  position: relative;
+  font-weight: 900;
+  font-size: 20.4em;
+  display: block;
+  overflow: hidden;
+  width: fit-content;
+  height: max-content;
+}
+/* .errCode span:first-letter {
+  letter-spacing: 12vmax;
+} */
+.errCode span:before {
+  content: "";
+  background-image: url("/assets/Portal-RickMorty.webp");
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  animation: rotateIn 0.5s ease-out;
+}
+/* #endregion  /**========  =========== */

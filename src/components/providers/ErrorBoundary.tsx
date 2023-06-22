@@ -1,5 +1,7 @@
 import { Component, type ErrorInfo, type PropsWithChildren } from "react"
 
+import Unknown from "@/components/Unknown"
+
 type Props = PropsWithChildren
 
 interface State {
@@ -25,7 +27,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
-      return <p>Oops, Error Boundary</p>
+      return <Unknown />
     }
 
     return this.props.children

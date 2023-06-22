@@ -15,7 +15,7 @@ interface Props extends PropsWithChildren {
 
 export const RenderGuard: FC<Props> = ({
   children,
-  renderIf,
+  renderIf = true,
   fallbackComponent,
 }: Props) => {
   const [mounted, setMounted] = useState(false)
