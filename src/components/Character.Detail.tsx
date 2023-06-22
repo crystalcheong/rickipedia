@@ -36,7 +36,7 @@ const CharacterDetail = ({
         id={`char-${character.id}`}
         className={cn(
           "relative",
-          "after:slime after:absolute after:inset-0 after:-left-2.5 after:top-2.5 after:z-[-1] after:block after:h-full after:blur-md after:content-['']"
+          "after:slime after:absolute after:inset-0 after:-left-2.5 after:top-2.5 after:z-[-1] after:block after:h-full after:animate-blob after:blur-md after:transition-all after:content-['']"
         )}
       >
         <NextImage

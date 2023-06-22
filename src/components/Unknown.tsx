@@ -1,4 +1,5 @@
 import { useRouter } from "next/router"
+import { type ReactNode } from "react"
 
 import { Button } from "@/components/ui"
 import { AppRoutes } from "@/data/static"
@@ -8,8 +9,10 @@ import styles from "@/styles/unknown.module.css"
 
 interface Props {
   statusCode?: number
+  message?: string | ReactNode
+  hideRedirect?: boolean
 }
-const Unknown = ({ statusCode = 0 }: Props) => {
+const Unknown = ({ statusCode = 0, message, hideRedirect = false }: Props) => {
   const router = useRouter()
 
   const isThreeDigitNumberWithZeroInMiddle = (number: number): boolean =>
@@ -21,7 +24,8 @@ const Unknown = ({ statusCode = 0 }: Props) => {
     <section
       className={cn(
         "flex flex-col place-content-center place-items-center gap-4",
-        "transition-all"
+        "transition-all",
+        "relative overflow-hidden"
       )}
     >
       <aside className="space" />
@@ -34,16 +38,22 @@ const Unknown = ({ statusCode = 0 }: Props) => {
         <span>{isValidCode ? statusCode : "???"}</span>
       </div>
       <p className="max-w-prose text-center">
-        The page you are trying to search has been <br /> moved to another
-        universe.
+        {message ?? (
+          <>
+            The page you are trying to search has been <br /> moved to another
+            universe.
+          </>
+        )}
       </p>
 
-      <Button
-        className="slime cursor-pointer font-semibold uppercase"
-        onClick={() => void router.push(AppRoutes.Home)}
-      >
-        Get me home
-      </Button>
+      {!hideRedirect && (
+        <Button
+          className="slime cursor-pointer font-semibold uppercase"
+          onClick={() => void router.push(AppRoutes.Home)}
+        >
+          Get me home
+        </Button>
+      )}
     </section>
   )
 }

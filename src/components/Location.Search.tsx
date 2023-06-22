@@ -31,6 +31,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/Popover"
 import { Toggle } from "@/components/ui/Toggle"
+import Unknown from "@/components/Unknown"
 import { type Location, type PaginationInfo } from "@/data/clients/rickAndMorty"
 import { api, cn, getUniqueSetList, logger } from "@/utils"
 
@@ -398,22 +399,40 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
         </form>
       </section>
 
-      <section
-        className={cn(
-          "mx-auto w-fit",
-          "grid grid-flow-row-dense",
-          "auto-cols-fr gap-5",
-          "sm:grid-cols-2 lg:grid-cols-3"
-        )}
-      >
-        {(locations[currentPaginationType] ?? []).map((location) => (
-          <LocationCard
-            key={location.id}
-            location={location}
+      <RenderGuard
+        renderIf={
+          !(isLoadingLocations || queryStatus.isFetching) ||
+          !!(locations[currentPaginationType] ?? []).length
+        }
+        fallbackComponent={
+          <Unknown
+            hideRedirect
+            message={
+              <>
+                The location you are trying to search has been <br /> is not in
+                any dimension.
+              </>
+            }
           />
-        ))}
-      </section>
-      <div ref={paginatedEndRef} />
+        }
+      >
+        <section
+          className={cn(
+            "mx-auto w-fit",
+            "grid grid-flow-row-dense",
+            "auto-cols-fr gap-5",
+            "sm:grid-cols-2 lg:grid-cols-3"
+          )}
+        >
+          {(locations[currentPaginationType] ?? []).map((location) => (
+            <LocationCard
+              key={location.id}
+              location={location}
+            />
+          ))}
+        </section>
+        <div ref={paginatedEndRef} />
+      </RenderGuard>
     </main>
   )
 }

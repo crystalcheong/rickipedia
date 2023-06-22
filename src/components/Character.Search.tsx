@@ -27,6 +27,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/Popover"
 import { Toggle } from "@/components/ui/Toggle"
+import Unknown from "@/components/Unknown"
 import {
   type Character,
   type CharacterFilterInfo,
@@ -396,23 +397,41 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
         </form>
       </section>
 
-      <section
-        className={cn(
-          "mx-auto w-fit",
-          "grid grid-flow-row-dense",
-          "auto-cols-fr gap-5",
-          "sm:grid-cols-2 lg:grid-cols-3"
-        )}
-      >
-        {(characters[currentPaginationType] ?? []).map((character) => (
-          <CharacterCard
-            key={character.id}
-            character={character}
-            tilt
+      <RenderGuard
+        renderIf={
+          !(isLoadingCharacters || queryStatus.isFetching) &&
+          !!(characters[currentPaginationType] ?? []).length
+        }
+        fallbackComponent={
+          <Unknown
+            hideRedirect
+            message={
+              <>
+                The character you are trying to search has been <br /> is not in
+                any dimension.
+              </>
+            }
           />
-        ))}
-      </section>
-      <div ref={paginatedEndRef} />
+        }
+      >
+        <section
+          className={cn(
+            "mx-auto w-fit",
+            "grid grid-flow-row-dense",
+            "auto-cols-fr gap-5",
+            "sm:grid-cols-2 lg:grid-cols-3"
+          )}
+        >
+          {(characters[currentPaginationType] ?? []).map((character) => (
+            <CharacterCard
+              key={character.id}
+              character={character}
+              tilt
+            />
+          ))}
+        </section>
+        <div ref={paginatedEndRef} />
+      </RenderGuard>
     </main>
   )
 }

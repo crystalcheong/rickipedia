@@ -69,11 +69,26 @@ export default {
           from: { transform: "rotate(0deg) scale(0.2)", opacity: "0" },
           to: { transform: "rotate(360deg) scale(1.7)", opacity: "1" },
         },
+        blob: {
+          "0%": {
+            transform: "translate(0px, 0px) scale(1)",
+          },
+          "33%": {
+            transform: "translate(10px, 10px) scale(1)",
+          },
+          "66%": {
+            transform: "translate(5px, 5px) scale(0.9)",
+          },
+          "100%": {
+            transform: "tranlate(0px, 0px) scale(1)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         rotateIn: "rotateIn 0.5s ease-out",
+        blob: "blob 7s infinite",
       },
     },
   },

@@ -29,7 +29,7 @@ export const SlimePortal: FC<SlimePortalProps> = ({
     setTimeout(function () {
       setShowPortal(false)
     }, 500)
-  }, [])
+  }, [children])
 
   return (
     <>
