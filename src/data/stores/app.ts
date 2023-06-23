@@ -15,7 +15,7 @@ interface Store extends State, Mutators {}
 
 const store = create<Store>()(
   persist(
-    (set, get) => ({
+    () => ({
       isBeta: env.NEXT_PUBLIC_SHOW_LOGGER === "1" ?? false,
     }),
     {
