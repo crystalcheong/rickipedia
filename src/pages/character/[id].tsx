@@ -104,9 +104,7 @@ const CharacterIdPage = () => {
             <Badge className="slime">{locationIds.length}</Badge>
           </header>
           <div
-            className={cn(
-              "flex flex-row flex-wrap place-content-start place-items-center gap-4"
-            )}
+            className={cn("flex flex-col gap-4", "sm:flex-row sm:flex-wrap")}
           >
             {locationsData.map((location) => (
               <LocationCard

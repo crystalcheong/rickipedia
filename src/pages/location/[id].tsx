@@ -115,7 +115,9 @@ const LocationIdPage = () => {
           </header>
           <div
             className={cn(
-              "flex flex-row flex-wrap place-content-start place-items-center gap-4"
+              "flex flex-col gap-4",
+              "place-content-start place-items-center",
+              "sm:flex-row sm:flex-wrap"
             )}
           >
             {charactersData.map((character) => (

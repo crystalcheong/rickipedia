@@ -14,7 +14,13 @@ const LocationPage = () => {
       }}
     >
       <header className="mx-auto">
-        <h1 className="slime bg-clip-text text-center font-schwifty text-8xl font-bold text-transparent shadow-green-500/50 drop-shadow-lg">
+        <h1
+          className={cn(
+            "text-center",
+            "slime bg-clip-text font-schwifty text-transparent",
+            "text-5xl sm:text-7xl lg:text-8xl"
+          )}
+        >
           Locations
         </h1>
       </header>

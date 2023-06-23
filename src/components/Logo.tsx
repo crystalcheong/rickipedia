@@ -43,7 +43,8 @@ export const Logo = ({ variant = "text" }: LogoProps) => {
           className={cn(
             "border-[#8CE261]",
             "slime bg-clip-text text-transparent",
-            "uppercase"
+            "uppercase",
+            "max-[300px]:hidden"
           )}
         >
           Beta

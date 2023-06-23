@@ -29,7 +29,10 @@ const LocationCard = ({ location, className, ...rest }: LocationCardProps) => {
 
   return (
     <Card
-      className={cn("w-[300px] cursor-pointer border-[#8CE261]", className)}
+      className={cn(
+        "cursor-pointer border-[#8CE261] sm:w-64 xl:w-80",
+        className
+      )}
       onClick={handleOnClick}
       {...rest}
     >

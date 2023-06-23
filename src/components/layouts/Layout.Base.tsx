@@ -12,7 +12,7 @@ import Logo from "@/components/Logo"
 import { RenderGuard } from "@/components/providers"
 import ThemeSwitch from "@/components/Theme.Switch"
 import { NextImage } from "@/components/ui"
-import { AppRoutes } from "@/data/static"
+import { AppRoutes, ExternalLinks } from "@/data/static"
 import { cn } from "@/utils"
 
 interface SlimePortalProps extends PropsWithChildren {
@@ -37,7 +37,7 @@ export const SlimePortal: FC<SlimePortalProps> = ({
         <NextImage
           isPriority
           useSkeleton
-          src={"/assets/Portal.gif"}
+          src={"/assets/Portal.webp"}
           alt={"logo"}
           width={500}
           height={500}
@@ -98,13 +98,34 @@ const BaseLayout = ({
       </main>
       <footer className={cn("border-t")}>
         <main className={cn("mx-auto w-10/12", "py-4", "flex flex-col gap-4")}>
-          <Logo />
+          <header className="flex flex-row flex-wrap place-content-between place-items-center">
+            <Logo />
+
+            <aside className="flex flex-row flex-wrap gap-4">
+              {Object.entries(ExternalLinks).map(([link, data]) => (
+                <Link
+                  key={`footer-link-${link}`}
+                  href={data.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={cn(
+                    "hover:slime text-muted-foreground hover:bg-clip-text hover:text-transparent sm:text-sm",
+                    "inline-flex flex-row place-content-center place-items-center gap-1"
+                  )}
+                >
+                  <data.icon className="h-4 w-4" />
+                  <span className="sr-only sm:not-sr-only">{link}</span>
+                </Link>
+              ))}
+            </aside>
+          </header>
 
           <aside className="flex flex-col gap-2 sm:flex-row">
             {Object.entries(AppRoutes).map(([route, href]) => (
               <Link
                 key={`footer-route-${route}`}
                 href={href}
+                rel="noreferrer"
                 className="hover:slime text-muted-foreground hover:bg-clip-text hover:text-transparent sm:text-sm"
               >
                 {route}

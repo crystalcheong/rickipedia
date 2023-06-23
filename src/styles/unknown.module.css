@@ -21,7 +21,7 @@
 .errCode span {
   position: relative;
   font-weight: 900;
-  font-size: 20.4em;
+  font-size: 21vmax;
   display: block;
   overflow: hidden;
   width: fit-content;

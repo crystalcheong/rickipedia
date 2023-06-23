@@ -1,7 +1,4 @@
 import { Head, Html, Main, NextScript } from "next/document"
-import { DefaultSeo } from "next-seo"
-
-import { SEO } from "@/data/static/app"
 
 const fonts: string[] = ["/fonts/Schwifty.woff2"]
 
@@ -19,7 +16,6 @@ export default function Document() {
             crossOrigin="anonymous"
           />
         ))}
-        <DefaultSeo {...SEO} />
       </Head>
       <body>
         <Main />

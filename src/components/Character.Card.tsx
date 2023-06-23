@@ -43,7 +43,7 @@ const CharacterCard = ({
       tilt={tilt}
       tiltProps={tiltProps}
       className={cn(
-        "relative w-64 cursor-pointer",
+        "relative cursor-pointer sm:w-64",
         tilt && "hover:z-20 hover:cursor-grab",
         "shadow-green-500/50 hover:shadow-2xl",
         "border-[#8CE261]",

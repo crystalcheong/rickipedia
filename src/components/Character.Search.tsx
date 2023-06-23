@@ -1,6 +1,13 @@
 "use client"
 
-import { Check, ChevronsUpDown, Filter, RotateCw } from "lucide-react"
+import {
+  ArrowUpCircle,
+  Check,
+  ChevronsUpDown,
+  Filter,
+  RotateCw,
+} from "lucide-react"
+import Link from "next/link"
 import {
   type ChangeEvent,
   type ComponentPropsWithoutRef,
@@ -289,7 +296,21 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
       className={cn("flex flex-col gap-12", className)}
       {...rest}
     >
-      <section>
+      <Link
+        href="#searchForm"
+        scroll={false}
+        className={cn(
+          "slime",
+          "fixed bottom-[5%] right-[10%]",
+          "p !h-auto !w-fit !p-0 text-accent",
+          "rounded-full",
+          "animate-bounce",
+          (characters[currentPaginationType] ?? []).length <= 20 && "hidden"
+        )}
+      >
+        <ArrowUpCircle className="h-8 w-8 hover:scale-110" />
+      </Link>
+      <section id="searchForm">
         <form
           method="get"
           onSubmit={handleOnSearch}
@@ -399,7 +420,7 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
 
       <RenderGuard
         renderIf={
-          !(isLoadingCharacters || queryStatus.isFetching) &&
+          !(isLoadingCharacters || queryStatus.isFetching) ||
           !!(characters[currentPaginationType] ?? []).length
         }
         fallbackComponent={

@@ -32,28 +32,29 @@ const Unknown = ({ statusCode = 0, message, hideRedirect = false }: Props) => {
       <div
         className={cn(
           styles.errCode,
-          "max-h-[30vh] scale-50 sm:max-h-[45vh] sm:scale-100"
+          "flex flex-col place-content-center place-items-center gap-4",
+          "h-full max-h-full scale-50 sm:scale-100"
         )}
       >
         <span>{isValidCode ? statusCode : "???"}</span>
-      </div>
-      <p className="max-w-prose text-center">
-        {message ?? (
-          <>
-            The page you are trying to search has been <br /> moved to another
-            universe.
-          </>
-        )}
-      </p>
+        <p className="max-w-prose text-center">
+          {message ?? (
+            <>
+              The page you are trying to search has been <br /> moved to another
+              universe.
+            </>
+          )}
+        </p>
 
-      {!hideRedirect && (
-        <Button
-          className="slime cursor-pointer font-semibold uppercase"
-          onClick={() => void router.push(AppRoutes.Home)}
-        >
-          Get me home
-        </Button>
-      )}
+        {!hideRedirect && (
+          <Button
+            className="slime cursor-pointer font-semibold uppercase"
+            onClick={() => void router.push(AppRoutes.Home)}
+          >
+            Get me home
+          </Button>
+        )}
+      </div>
     </section>
   )
 }

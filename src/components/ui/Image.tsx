@@ -44,6 +44,7 @@ const NextImage = ({
       height={height}
       alt={alt}
       placeholder="blur"
+      rel="noreferrer"
       blurDataURL={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
       onLoadingComplete={() => setStatus("complete")}
       priority={isPriority}
