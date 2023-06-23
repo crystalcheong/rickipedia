@@ -43,6 +43,7 @@
     "class-variance-authority": "^0.6.0",
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
+    "idb-keyval": "^6.2.1",
     "lucide-react": "^0.246.0",
     "next": "^13.4.2",
     "next-seo": "^6.0.0",
@@ -53,7 +54,8 @@
     "superjson": "1.12.2",
     "tailwind-merge": "^1.13.2",
     "tailwindcss-animate": "^1.0.6",
-    "zod": "^3.21.4"
+    "zod": "^3.21.4",
+    "zustand": "^4.3.8"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.5",

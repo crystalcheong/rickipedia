@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 
+import { DebugPrefix } from "@/data/static/app"
 import { env } from "@/env.mjs"
 
 export enum LogLevel {
@@ -76,7 +77,7 @@ export const logger = (
 
   const parts = [
     "%c",
-    `${logLevel.title || ""}${level.toUpperCase()}`,
+    `${DebugPrefix}${logLevel.title || ""}${level.toUpperCase()}`,
     `%c${breakpoint ?? ""}%c`,
   ]
 

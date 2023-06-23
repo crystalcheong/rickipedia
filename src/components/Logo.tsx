@@ -2,7 +2,7 @@ import { useRouter } from "next/router"
 
 import { Badge, NextImage } from "@/components/ui"
 import { AppName } from "@/data/static/app"
-import { env } from "@/env.mjs"
+import { useAppStore } from "@/data/stores/app"
 import { cn } from "@/utils"
 
 interface LogoProps {
@@ -11,6 +11,8 @@ interface LogoProps {
 
 export const Logo = ({ variant = "text" }: LogoProps) => {
   const router = useRouter()
+  const isBeta: boolean = useAppStore().isBeta
+
   return (
     <div
       onClick={() => void router.push("/")}
@@ -37,7 +39,7 @@ export const Logo = ({ variant = "text" }: LogoProps) => {
       {variant === "text" && (
         <h4 className="slime bg-clip-text text-transparent">{AppName}</h4>
       )}
-      {env.NEXT_PUBLIC_SHOW_LOGGER === "1" && (
+      {isBeta && (
         <Badge
           variant="outline"
           className={cn(

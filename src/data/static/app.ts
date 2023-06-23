@@ -1,6 +1,7 @@
 import { type NextSeoProps } from "next-seo/lib/types"
 
 export const AppName = "Rickipedia"
+export const DebugPrefix = `@${AppName.toUpperCase()}/`
 
 export const SEO: Partial<NextSeoProps> = {
   defaultTitle: AppName,
