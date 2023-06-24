@@ -5,7 +5,8 @@ import { useState } from "react"
 import BaseLayout from "@/components/layouts/Layout.Base"
 import { RenderGuard } from "@/components/providers"
 import { Badge } from "@/components/ui/Badge"
-import { type Location, RickAndMorty } from "@/data/clients/rickAndMorty"
+import { RickAndMortyClient } from "@/data/clients/rickAndMorty"
+import { type RickAndMorty } from "@/types/rickAndMorty"
 import { api, cn, getUniqueSetList } from "@/utils"
 
 const CharacterCard = dynamic(() => import("../../components/Character.Card"))
@@ -14,7 +15,7 @@ const LocationIdPage = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const ids: number[] = RickAndMorty.parseIds(id)
+  const ids: number[] = RickAndMortyClient.parseIds(id)
 
   //#endregion  //*======== STATES ===========
   const [characterIds, setCharacterIds] = useState<number[]>([])
@@ -28,12 +29,12 @@ const LocationIdPage = () => {
     {
       initialData: [],
       enabled: !!ids.length,
-      onSuccess: (data: Location[]) => {
+      onSuccess: (data: RickAndMorty.Location[]) => {
         const characterIds: number[] = getUniqueSetList(
           data.reduce(
             (cIds: number[] = [], { residents }) =>
               cIds.concat(
-                RickAndMorty.getIdsFromUrls({
+                RickAndMortyClient.getIdsFromUrls({
                   idUrls: residents,
                   type: "character",
                 })
@@ -111,7 +112,9 @@ const LocationIdPage = () => {
         <section className="flex flex-col gap-4">
           <header className="flex flex-row items-center gap-2">
             <h4>Characters</h4>
-            <Badge className="slime">{characterIds.length}</Badge>
+            {!!characterIds.length && (
+              <Badge className="slime">{characterIds.length}</Badge>
+            )}
           </header>
           <div
             className={cn(

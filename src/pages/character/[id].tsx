@@ -5,7 +5,8 @@ import { useState } from "react"
 import BaseLayout from "@/components/layouts/Layout.Base"
 import { RenderGuard } from "@/components/providers"
 import { Badge } from "@/components/ui/Badge"
-import { type Character, RickAndMorty } from "@/data/clients/rickAndMorty"
+import { RickAndMortyClient } from "@/data/clients/rickAndMorty"
+import { type RickAndMorty } from "@/types/rickAndMorty"
 import { api, cn, getUniqueSetList } from "@/utils"
 
 const CharacterDetail = dynamic(
@@ -18,7 +19,7 @@ const CharacterIdPage = () => {
   const router = useRouter()
   const { id } = router.query
 
-  const ids: number[] = RickAndMorty.parseIds(id)
+  const ids: number[] = RickAndMortyClient.parseIds(id)
 
   //#endregion  //*======== STATES ===========
   const [locationIds, setLocationIds] = useState<number[]>([])
@@ -33,7 +34,7 @@ const CharacterIdPage = () => {
     {
       initialData: [],
       enabled: !!ids.length,
-      onSuccess: (data: Character[]) => {
+      onSuccess: (data: RickAndMorty.Character[]) => {
         const getLocationId = (locationUrl: string): number =>
           parseInt(locationUrl.slice(locationUrl.lastIndexOf("/") + 1))
         const locationIds: number[] = data.map(({ location }) =>
@@ -45,7 +46,7 @@ const CharacterIdPage = () => {
           data.reduce(
             (eIds: number[] = [], { episode }) =>
               eIds.concat(
-                RickAndMorty.getIdsFromUrls({
+                RickAndMortyClient.getIdsFromUrls({
                   idUrls: episode,
                   type: "episode",
                 })
@@ -101,7 +102,9 @@ const CharacterIdPage = () => {
         <section className="flex flex-col gap-4">
           <header className="flex flex-row items-center gap-2">
             <h4>Locations</h4>
-            <Badge className="slime">{locationIds.length}</Badge>
+            {!!locationIds.length && (
+              <Badge className="slime">{locationIds.length}</Badge>
+            )}
           </header>
           <div
             className={cn("flex flex-col gap-4", "sm:flex-row sm:flex-wrap")}

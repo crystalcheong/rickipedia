@@ -1,29 +1,10 @@
+import { type RickAndMorty } from "@/types/rickAndMorty.d"
 import { getUniqueObjectListwithKeys, HTTP, logger, LogLevel } from "@/utils"
 
-//#endregion  //*======== TYPES ===========
-
-export interface PaginationInfo {
-  page: number
+//#endregion  //*======== EXPORT ZONE ===========
+export const DefaultPaginationInfo: RickAndMorty.PaginationInfo = {
+  page: 1,
 }
-
-export interface CharacterFilterInfo {
-  name?: string
-  status?: Character["status"]
-  species?: Character["species"]
-  gender?: Character["gender"]
-}
-
-export interface LocationFilterInfo {
-  name?: string
-  type?: string
-  dimension?: string
-}
-
-export interface EpisodeFilterInfo {
-  name?: string
-  episode?: string
-}
-
 export enum CharacterStatus {
   alive = "alive",
   dead = "dead",
@@ -41,47 +22,7 @@ export enum CharacterGender {
   genderless = "genderless",
   unknown = "unknown",
 }
-
-export interface BaseSchema {
-  id: number
-  name: string
-  type: string
-  url: string
-  created: string
-}
-export interface Character extends BaseSchema {
-  status: CharacterStatus
-  species: CharacterSpecies
-  gender: CharacterGender
-  origin: {
-    name: string
-    url: string
-  }
-  location: {
-    name: string
-    url: string
-  }
-  image: string
-  episode: string[]
-}
-
-export interface Location extends BaseSchema {
-  dimension: string
-  residents: string[]
-}
-
-export interface Episode extends Omit<BaseSchema, "type"> {
-  air_date: string
-  episode: string
-  characters: string[]
-}
-//#endregion  //*======== TYPES ===========
-
-//#endregion  //*======== EXPORT ===========
-export const DefaultPaginationInfo: PaginationInfo = {
-  page: 1,
-}
-//#endregion  //*======== EXPORT ===========
+//#endregion  //*======== EXPORT ZONE ===========
 
 const Endpoint = `https://rickandmortyapi.com/api`
 
@@ -96,23 +37,25 @@ const Routes: Record<string, string> = {
   getEpisodes: `/episode/:ids`,
 }
 
-export class RickAndMorty {
+export class RickAndMortyClient {
   private http: HTTP<typeof Routes>
-  private static instance: RickAndMorty
+  private static instance: RickAndMortyClient
 
   private constructor() {
     this.http = new HTTP(Endpoint, Routes)
   }
 
-  static getInstance = (): RickAndMorty => {
+  static getInstance = (): RickAndMortyClient => {
     if (!this.instance) {
-      this.instance = new RickAndMorty()
+      this.instance = new RickAndMortyClient()
     }
     return this.instance
   }
 
-  static getUniqueCharacters = (characters: Character[]): Character[] =>
-    getUniqueObjectListwithKeys<Character>({
+  static getUniqueCharacters = (
+    characters: RickAndMorty.Character[]
+  ): RickAndMorty.Character[] =>
+    getUniqueObjectListwithKeys<RickAndMorty.Character>({
       list: characters,
       keys: ["id"],
     })
@@ -140,14 +83,14 @@ export class RickAndMorty {
   }
 
   getAllCharacters = async (
-    pagination: PaginationInfo = DefaultPaginationInfo,
-    filters?: Partial<CharacterFilterInfo>
-  ): Promise<Character[]> => {
+    pagination: RickAndMorty.PaginationInfo = DefaultPaginationInfo,
+    filters?: Partial<RickAndMorty.CharacterFilterInfo>
+  ): Promise<RickAndMorty.Character[]> => {
     const hasFilters: boolean = Object.values(filters ?? {}).some((filter) =>
       Boolean(filter)
     )
 
-    const characters: Character[] = []
+    const characters: RickAndMorty.Character[] = []
     const params = {
       page: pagination.page.toString(),
       ...(hasFilters &&
@@ -165,7 +108,8 @@ export class RickAndMorty {
         unknown
       >
 
-      const charactersData: Character[] = (result?.results ?? []) as Character[]
+      const charactersData: RickAndMorty.Character[] = (result?.results ??
+        []) as RickAndMorty.Character[]
       characters.push(...charactersData)
 
       logger(
@@ -190,8 +134,12 @@ export class RickAndMorty {
     return characters
   }
 
-  getCharacters = async ({ ids }: { ids: number[] }): Promise<Character[]> => {
-    const characters: Character[] = []
+  getCharacters = async ({
+    ids,
+  }: {
+    ids: number[]
+  }): Promise<RickAndMorty.Character[]> => {
+    const characters: RickAndMorty.Character[] = []
     if (!ids.length) return characters
     const params = {
       ids: JSON.stringify(ids),
@@ -203,7 +151,8 @@ export class RickAndMorty {
       if (!response.ok) return characters
 
       const result: unknown[] = (await response.json()) as unknown[]
-      const charactersData: Character[] = (result ?? []) as Character[]
+      const charactersData: RickAndMorty.Character[] = (result ??
+        []) as RickAndMorty.Character[]
       characters.push(...charactersData)
 
       logger(
@@ -228,14 +177,14 @@ export class RickAndMorty {
   }
 
   getAllLocations = async (
-    pagination: PaginationInfo = DefaultPaginationInfo,
-    filters?: Partial<LocationFilterInfo>
-  ): Promise<Location[]> => {
+    pagination: RickAndMorty.PaginationInfo = DefaultPaginationInfo,
+    filters?: Partial<RickAndMorty.LocationFilterInfo>
+  ): Promise<RickAndMorty.Location[]> => {
     const hasFilters: boolean = Object.values(filters ?? {}).some((filter) =>
       Boolean(filter)
     )
 
-    const locations: Location[] = []
+    const locations: RickAndMorty.Location[] = []
     const params = {
       page: pagination.page.toString(),
       ...(hasFilters &&
@@ -253,7 +202,8 @@ export class RickAndMorty {
         unknown
       >
 
-      const locationsData: Location[] = (result?.results ?? []) as Location[]
+      const locationsData: RickAndMorty.Location[] = (result?.results ??
+        []) as RickAndMorty.Location[]
       locations.push(...locationsData)
 
       logger(
@@ -278,8 +228,12 @@ export class RickAndMorty {
     return locations
   }
 
-  getLocations = async ({ ids }: { ids: number[] }): Promise<Location[]> => {
-    const locations: Location[] = []
+  getLocations = async ({
+    ids,
+  }: {
+    ids: number[]
+  }): Promise<RickAndMorty.Location[]> => {
+    const locations: RickAndMorty.Location[] = []
 
     if (!ids.length) return locations
     const params = {
@@ -292,7 +246,8 @@ export class RickAndMorty {
       if (!response.ok) return locations
 
       const result: unknown[] = (await response.json()) as unknown[]
-      const locationsData: Location[] = (result ?? []) as Location[]
+      const locationsData: RickAndMorty.Location[] = (result ??
+        []) as RickAndMorty.Location[]
       locations.push(...locationsData)
 
       logger(
@@ -316,14 +271,14 @@ export class RickAndMorty {
   }
 
   getAllEpisodes = async (
-    pagination: PaginationInfo = DefaultPaginationInfo,
-    filters?: Partial<EpisodeFilterInfo>
-  ): Promise<Episode[]> => {
+    pagination: RickAndMorty.PaginationInfo = DefaultPaginationInfo,
+    filters?: Partial<RickAndMorty.EpisodeFilterInfo>
+  ): Promise<RickAndMorty.Episode[]> => {
     const hasFilters: boolean = Object.values(filters ?? {}).some((filter) =>
       Boolean(filter)
     )
 
-    const episodes: Episode[] = []
+    const episodes: RickAndMorty.Episode[] = []
     const params = {
       page: pagination.page.toString(),
       ...(hasFilters &&
@@ -341,7 +296,8 @@ export class RickAndMorty {
         unknown
       >
 
-      const episodesData: Episode[] = (result?.results ?? []) as Episode[]
+      const episodesData: RickAndMorty.Episode[] = (result?.results ??
+        []) as RickAndMorty.Episode[]
       episodes.push(...episodesData)
 
       logger(
@@ -366,8 +322,12 @@ export class RickAndMorty {
     return episodes
   }
 
-  getEpisodes = async ({ ids }: { ids: number[] }): Promise<Episode[]> => {
-    const episodes: Episode[] = []
+  getEpisodes = async ({
+    ids,
+  }: {
+    ids: number[]
+  }): Promise<RickAndMorty.Episode[]> => {
+    const episodes: RickAndMorty.Episode[] = []
 
     if (!ids.length) return episodes
     const params = {
@@ -380,7 +340,8 @@ export class RickAndMorty {
       if (!response.ok) return episodes
 
       const result: unknown[] = (await response.json()) as unknown[]
-      const episodesData: Episode[] = (result ?? []) as Episode[]
+      const episodesData: RickAndMorty.Episode[] = (result ??
+        []) as RickAndMorty.Episode[]
       episodes.push(...episodesData)
 
       logger(

@@ -36,14 +36,12 @@ import {
 import { Toggle } from "@/components/ui/Toggle"
 import Unknown from "@/components/Unknown"
 import {
-  type Character,
-  type CharacterFilterInfo,
   CharacterGender,
   CharacterSpecies,
   CharacterStatus,
   DefaultPaginationInfo,
-  type PaginationInfo,
 } from "@/data/clients/rickAndMorty"
+import { type RickAndMorty } from "@/types/rickAndMorty"
 import { api, cn, logger } from "@/utils"
 
 import CharacterCard from "../components/Character.Card"
@@ -56,10 +54,12 @@ export const InitialPaginationStates: Record<
 > = Object.fromEntries(
   PaginationTypes.map((type) => [type, DefaultPaginationInfo])
 )
-const InitialCharactersStates: Record<PaginationType, Character[]> =
-  Object.fromEntries(PaginationTypes.map((type) => [type, []]))
+const InitialCharactersStates: Record<
+  PaginationType,
+  RickAndMorty.Character[]
+> = Object.fromEntries(PaginationTypes.map((type) => [type, []]))
 
-const InitialSearchState: Partial<CharacterFilterInfo> = {
+const InitialSearchState: Partial<RickAndMorty.CharacterFilterInfo> = {
   name: "",
 }
 
@@ -107,7 +107,7 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
         enabled:
           (!(characters["all"] ?? []).length || queryStatus.isFetching) &&
           !queryStatus.isEnd,
-        onSuccess: (newCharacters: Character[]) => {
+        onSuccess: (newCharacters: RickAndMorty.Character[]) => {
           setCharacters((state) => ({
             ...state,
             [currentPaginationType]: isFirstQuery
@@ -134,11 +134,11 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
     // Reset
     setPaginations({
       ...paginations,
-      [type]: InitialPaginationStates[type] as PaginationInfo,
+      [type]: InitialPaginationStates[type] as RickAndMorty.PaginationInfo,
     })
     setCharacters({
       ...characters,
-      [type]: InitialCharactersStates[type] as Character[],
+      [type]: InitialCharactersStates[type] as RickAndMorty.Character[],
     })
   }
 
@@ -347,7 +347,7 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
           >
             {Object.entries(CharacterChangeFilters).map(([name, filterMap]) => {
               const filterKey = name as keyof typeof searchFilters
-              const value = searchFilters?.[filterKey]
+              const value = searchFilters?.[filterKey] as string
 
               if (!filterMap) return null
               return (

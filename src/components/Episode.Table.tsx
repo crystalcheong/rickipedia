@@ -4,9 +4,9 @@ import React from "react"
 
 import { Button } from "@/components/ui/Button"
 import { type BaseDataTableProps, DataTable } from "@/components/ui/Table.Data"
-import { type Episode } from "@/data/clients/rickAndMorty"
+import { type RickAndMorty } from "@/types/rickAndMorty.d"
 
-const episodeColumns: ColumnDef<Episode>[] = [
+const episodeColumns: ColumnDef<RickAndMorty.Episode>[] = [
   {
     accessorKey: "episode",
     header: ({ column }) => {
@@ -42,7 +42,7 @@ const episodeColumns: ColumnDef<Episode>[] = [
 ]
 
 interface EpisodeTable extends BaseDataTableProps {
-  episodes: Episode[]
+  episodes: RickAndMorty.Episode[]
   columns?: typeof episodeColumns
 }
 

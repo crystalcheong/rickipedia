@@ -4,11 +4,11 @@ import {
   CharacterGender,
   CharacterSpecies,
   CharacterStatus,
-  RickAndMorty,
+  RickAndMortyClient,
 } from "@/data/clients/rickAndMorty"
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc"
 
-const client: RickAndMorty = RickAndMorty.getInstance()
+const client: RickAndMortyClient = RickAndMortyClient.getInstance()
 
 export const rickAndMortyRouter = createTRPCRouter({
   getAllCharacters: publicProcedure

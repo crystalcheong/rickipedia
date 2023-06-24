@@ -3,11 +3,12 @@ import { type ComponentPropsWithoutRef, Fragment } from "react"
 import { CharacterChangeFilters } from "@/components/Character.Search"
 import { NextImage } from "@/components/ui/Image"
 import { Separator } from "@/components/ui/Separator"
-import { type Character, CharacterStatus } from "@/data/clients/rickAndMorty"
+import { CharacterStatus } from "@/data/clients/rickAndMorty"
+import { type RickAndMorty } from "@/types/rickAndMorty.d"
 import { cn } from "@/utils"
 
 interface CharacterDetailProps extends ComponentPropsWithoutRef<"section"> {
-  character: Character
+  character: RickAndMorty.Character
 }
 
 const CharacterDetail = ({
@@ -85,9 +86,8 @@ const CharacterDetail = ({
           )}
         >
           {Object.keys(CharacterChangeFilters).map((name, idx) => {
-            const key = name as keyof Character
-            let attr = character?.[key]
-            if (typeof attr !== "string") attr = ""
+            const key = name as keyof RickAndMorty.Character
+            let attr = (character?.[key] ?? "") as string
             if (attr === CharacterStatus.unknown) attr = "???"
             const showSeperator = idx % 2 !== 0
             return (

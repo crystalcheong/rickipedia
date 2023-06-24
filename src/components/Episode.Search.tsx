@@ -8,10 +8,10 @@ import {
 } from "@/components/Character.Search"
 import EpisodeTable from "@/components/Episode.Table"
 import { Button } from "@/components/ui/Button"
-import { type Episode } from "@/data/clients/rickAndMorty"
+import { type RickAndMorty } from "@/types/rickAndMorty.d"
 import { api, cn, logger } from "@/utils"
 
-const InitialEpisodesStates: Record<PaginationType, Episode[]> =
+const InitialEpisodesStates: Record<PaginationType, RickAndMorty.Episode[]> =
   Object.fromEntries(PaginationTypes.map((type) => [type, []]))
 
 type EpisodeSearchProps = ComponentPropsWithoutRef<"main">
@@ -47,7 +47,7 @@ const EpisodeSearch = ({ className, ...rest }: EpisodeSearchProps) => {
         enabled:
           (!(episodes["all"] ?? []).length || queryStatus.isFetching) &&
           !queryStatus.isEnd,
-        onSuccess: (newEpisodes: Episode[]) => {
+        onSuccess: (newEpisodes: RickAndMorty.Episode[]) => {
           setEpisodes((state) => ({
             ...state,
             [currentPaginationType]: isFirstQuery

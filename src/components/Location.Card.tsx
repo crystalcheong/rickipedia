@@ -9,11 +9,12 @@ import {
   type CardProps,
   CardTitle,
 } from "@/components/ui/Card"
-import { CharacterStatus, type Location } from "@/data/clients/rickAndMorty"
+import { CharacterStatus } from "@/data/clients/rickAndMorty"
+import { type RickAndMorty } from "@/types/rickAndMorty.d"
 import { cn } from "@/utils"
 
 interface LocationCardProps extends CardProps {
-  location: Location
+  location: RickAndMorty.Location
 }
 const LocationCard = ({ location, className, ...rest }: LocationCardProps) => {
   const router = useRouter()
@@ -56,7 +57,7 @@ const LocationCard = ({ location, className, ...rest }: LocationCardProps) => {
         )}
       >
         {Object.keys(LocationBaseFilters).map((name) => {
-          const key = name as keyof Location
+          const key = name as keyof RickAndMorty.Location
           let attr = location?.[key]
           if (key === "residents" && Array.isArray(attr))
             attr = attr.length.toString()

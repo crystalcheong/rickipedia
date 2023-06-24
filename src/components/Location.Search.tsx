@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/Popover"
 import { Toggle } from "@/components/ui/Toggle"
 import Unknown from "@/components/Unknown"
-import { type Location, type PaginationInfo } from "@/data/clients/rickAndMorty"
+import { type RickAndMorty } from "@/types/rickAndMorty.d"
 import { api, cn, getUniqueSetList, logger } from "@/utils"
 
 export const LocationBaseFilters: Record<string, string[]> = {
@@ -51,10 +51,10 @@ export const LocationChangeFilters: Record<string, string[]> = {
   dimension: ["Dimension C-137", "unknown"],
 }
 
-const InitialLocationsStates: Record<PaginationType, Location[]> =
+const InitialLocationsStates: Record<PaginationType, RickAndMorty.Location[]> =
   Object.fromEntries(PaginationTypes.map((type) => [type, []]))
 
-const InitialSearchState: Partial<Location> = {
+const InitialSearchState: Partial<RickAndMorty.Location> = {
   name: "",
 }
 
@@ -100,7 +100,7 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
         enabled:
           (!(locations["all"] ?? []).length || queryStatus.isFetching) &&
           !queryStatus.isEnd,
-        onSuccess: (newLocations: Location[]) => {
+        onSuccess: (newLocations: RickAndMorty.Location[]) => {
           setLocations((state) => ({
             ...state,
             [currentPaginationType]: isFirstQuery
@@ -139,11 +139,11 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
     // Reset
     setPaginations({
       ...paginations,
-      [type]: InitialPaginationStates[type] as PaginationInfo,
+      [type]: InitialPaginationStates[type] as RickAndMorty.PaginationInfo,
     })
     setLocations({
       ...locations,
-      [type]: InitialLocationsStates[type] as Location[],
+      [type]: InitialLocationsStates[type] as RickAndMorty.Location[],
     })
   }
 
