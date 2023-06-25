@@ -1,28 +1,26 @@
-# Create T3 App
+<div align="center">
+  <img alt="logo" src="https://github.com/crystalcheong/rickipedia/blob/main/public/assets/Logo.png" height="100"/>
+</div>
+ 
+<h3 align="center">
+  Rickipedia
+</h3>
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+<p align="center">
+  🛸 Rick and Morty character wiki
+</p>
 
-## What's next? How do I make an app with this?
+---
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- ⚡️ Strapped with [T3 Stack](https://github.com/t3-oss/create-t3-app)
+- 🧱 Built with components from [shadcn](https://ui.shadcn.com/) & [Radix UI](https://www.radix-ui.com/)
+- 💨 Data fetched form [Rick And Morty API](https://rickandmortyapi.com/)
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
 
-## Learn More
+#### Environments
+| Branch | Deployment | TRPC
+| ----------- | ----------- | ----------- |
+| [main](https://github.com/crystalcheong/rickipedia/tree/main) | [rickipedia.vercel.app](https://rickipedia.vercel.app/) |  [/api/trpc](https://rickipedia.vercel.app/api/trpc) |
+| [beta](https://github.com/crystalcheong/rickipedia/tree/beta) | [rickipedia-beta.vercel.app](https://rickipedia-beta.vercel.app/) | [/api/trpc](https://rickipedia-beta.vercel.app/api/trpc) |
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
