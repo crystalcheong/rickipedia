@@ -1,3 +1,4 @@
+import { GitBranch } from "lucide-react"
 import Link from "next/link"
 import { NextSeo, type NextSeoProps } from "next-seo"
 import {
@@ -13,6 +14,7 @@ import { RenderGuard } from "@/components/providers"
 import ThemeSwitch from "@/components/Theme.Switch"
 import { NextImage } from "@/components/ui"
 import { AppRoutes, ExternalLinks } from "@/data/static"
+import { AppVersion } from "@/data/static/app"
 import { cn } from "@/utils"
 
 interface SlimePortalProps extends PropsWithChildren {
@@ -102,7 +104,7 @@ const BaseLayout = ({
       </main>
       <footer className={cn("border-t")}>
         <main className={cn("mx-auto w-10/12", "py-4", "flex flex-col gap-4")}>
-          <header className="flex flex-row flex-wrap place-content-between place-items-center">
+          <header className="flex flex-row flex-wrap place-content-between place-items-center gap-x-12 gap-y-1">
             <Logo />
 
             <aside className="flex flex-row flex-wrap gap-4">
@@ -121,6 +123,18 @@ const BaseLayout = ({
                   <span className="sr-only sm:not-sr-only">{link}</span>
                 </Link>
               ))}
+
+              <Link
+                href={`${ExternalLinks.Github.href}/releases/tag/v${AppVersion}`}
+                rel="noreferrer"
+                className={cn(
+                  "hover:slime group text-muted-foreground hover:bg-clip-text hover:text-transparent sm:text-sm",
+                  "inline-flex flex-row place-content-center place-items-center gap-1"
+                )}
+              >
+                <GitBranch className="h-4 w-4 group-hover:text-[#8CE261]" />
+                Build: {AppVersion}
+              </Link>
             </aside>
           </header>
 
