@@ -1,20 +1,25 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu"
-import { Laptop2, Moon, Sun } from "lucide-react"
+import { Laptop, Moon, SunMedium } from "lucide-react"
 import { useTheme } from "next-themes"
-import { type ReactNode } from "react"
 
 import { RenderGuard } from "@/components/providers"
+import { Button } from "@/components/ui"
 
-const ThemeModes: Record<string, ReactNode> = {
-  light: <Sun className="h-12" />,
-  dark: <Moon className="h-12" />,
-  system: <Laptop2 className="h-12" />,
+const ThemeModes = {
+  light: {
+    icon: SunMedium,
+  },
+  dark: {
+    icon: Moon,
+  },
+  system: {
+    icon: Laptop,
+  },
 }
 
 const ThemeSwitch = () => {
@@ -22,24 +27,28 @@ const ThemeSwitch = () => {
   return (
     <RenderGuard renderIf={!!theme}>
       <DropdownMenu>
-        <DropdownMenuTrigger aria-label="theme-switch button">
-          {ThemeModes[theme ?? "system"]}
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuRadioGroup
-            value={theme}
-            onValueChange={setTheme}
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8 w-8 px-0"
           >
-            {Object.entries(ThemeModes).map(([mode]) => (
-              <DropdownMenuRadioItem
-                value={mode}
-                key={`mode-${mode}`}
-                className=" capitalize"
-              >
-                {mode}
-              </DropdownMenuRadioItem>
-            ))}
-          </DropdownMenuRadioGroup>
+            <ThemeModes.light.icon className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <ThemeModes.dark.icon className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {Object.entries(ThemeModes).map(([mode, data]) => (
+            <DropdownMenuItem
+              key={`mode-${mode}`}
+              onClick={() => setTheme(mode)}
+              className="flex flex-row place-items-center gap-1"
+            >
+              <data.icon className="mr-2 h-4 w-4" />
+              <span className="capitalize">{mode}</span>
+            </DropdownMenuItem>
+          ))}
         </DropdownMenuContent>
       </DropdownMenu>
     </RenderGuard>
