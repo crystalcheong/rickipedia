@@ -75,8 +75,8 @@ export function DataTable<TData, TValue>({
     table.getCanPreviousPage() || table.getCanNextPage()
 
   return (
-    <div>
-      <div className="flex flex-col items-start gap-4 py-4">
+    <section>
+      <div className="flex flex-col items-start gap-4 bg-background py-4">
         {title}
 
         {showFields && (
@@ -128,7 +128,7 @@ export function DataTable<TData, TValue>({
         )}
       </div>
 
-      <Table className="rounded-md border">
+      <Table className="rounded-md border bg-background">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -201,6 +201,6 @@ export function DataTable<TData, TValue>({
           )}
         </div>
       )}
-    </div>
+    </section>
   )
 }

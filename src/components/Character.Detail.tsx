@@ -57,7 +57,7 @@ const CharacterDetail = ({
         />
       </div>
 
-      <article className="w-4/5 sm:w-5/12 sm:max-w-sm">
+      <article className={cn("w-4/5 sm:w-5/12 sm:max-w-sm", "bg-background")}>
         <div className="space-y-1">
           <h3 className="leading-none">{character.name}</h3>
 

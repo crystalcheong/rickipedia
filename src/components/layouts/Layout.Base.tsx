@@ -69,9 +69,13 @@ const BaseLayout = ({
   return (
     <>
       <NextSeo {...seo} />
-      <header
-        className={cn("sticky top-0 z-40", "bg-background/80 backdrop-blur-md")}
-      >
+
+      {/* SPACE BACKGROUND */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <aside className="space" />
+      </div>
+
+      <header className={cn("sticky top-0 z-40", " backdrop-blur-md")}>
         <nav
           className={cn(
             "mx-auto w-10/12",

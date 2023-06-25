@@ -310,113 +310,113 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
       >
         <ArrowUpCircle className="h-8 w-8 hover:scale-110" />
       </Link>
-      <section id="searchForm">
-        <form
-          method="get"
-          onSubmit={handleOnSearch}
+      <form
+        id="searchForm"
+        method="get"
+        onSubmit={handleOnSearch}
+        className={cn(
+          "bg-background",
+          "flex flex-col place-content-center place-items-center gap-4",
+          "mx-auto w-full sm:w-3/5 [&>*]:w-full"
+        )}
+      >
+        <section className="flex flex-row place-content-between place-items-center gap-4">
+          <Input
+            name="name"
+            type="search"
+            placeholder="Search by name"
+            value={searchFilters.name ?? ""}
+            onChange={handleOnSearchFormChange}
+          />
+          <Toggle
+            aria-label="Toggle Filter"
+            variant="outline"
+            pressed={showFilters}
+            onPressedChange={setShowFilters}
+            className={cn(showFilters && "border-[#8CE261]")}
+          >
+            <Filter className="h-4 w-4" />
+          </Toggle>
+        </section>
+
+        <section
           className={cn(
-            "flex flex-col place-content-center place-items-center gap-4",
-            "mx-auto w-full sm:w-3/5 [&>*]:w-full"
+            "hidden flex-row flex-wrap place-content-center place-items-center gap-4",
+            "border-b pb-8",
+            showFilters && "flex"
           )}
         >
-          <section className="flex flex-row place-content-between place-items-center gap-4">
-            <Input
-              name="name"
-              type="search"
-              placeholder="Search by name"
-              value={searchFilters.name ?? ""}
-              onChange={handleOnSearchFormChange}
-            />
-            <Toggle
-              aria-label="Toggle Filter"
-              variant="outline"
-              pressed={showFilters}
-              onPressedChange={setShowFilters}
-              className={cn(showFilters && "border-[#8CE261]")}
-            >
-              <Filter className="h-4 w-4" />
-            </Toggle>
-          </section>
+          {Object.entries(CharacterChangeFilters).map(([name, filterMap]) => {
+            const filterKey = name as keyof typeof searchFilters
+            const value = searchFilters?.[filterKey] as string
 
-          <section
-            className={cn(
-              "hidden flex-row flex-wrap place-content-center place-items-center gap-4",
-              "border-b pb-8",
-              showFilters && "flex"
-            )}
+            if (!filterMap) return null
+            return (
+              <Popover key={`filter-${name}`}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className={cn(
+                      "w-[200px] flex-1 justify-between capitalize",
+                      value
+                        ? "slime bg-clip-text text-transparent"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {value ?? `${name}`}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="max-h-60 w-full p-0">
+                  <RenderGuard renderIf={!!filterMap}>
+                    <Command>
+                      <CommandInput placeholder={`Search by ${name}...`} />
+                      <CommandEmpty>No {name} found.</CommandEmpty>
+                      <CommandGroup className="max-h-60 overflow-y-scroll">
+                        {Object.values(filterMap).map((filter) => (
+                          <CommandItem
+                            key={`filter-enum-${filter}`}
+                            className="capitalize"
+                            onSelect={(currentValue) => {
+                              onSearchChange({
+                                key: name as keyof typeof searchFilters,
+                                value:
+                                  currentValue === value
+                                    ? undefined
+                                    : currentValue,
+                              })
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                (value?.toString() ?? "").toUpperCase() ===
+                                  filter.toUpperCase()
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {filter}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </RenderGuard>
+                </PopoverContent>
+              </Popover>
+            )
+          })}
+          <Toggle
+            aria-label="Reset Filters"
+            variant="outline"
+            onClick={resetFilters}
+            disabled={!hasFilters}
           >
-            {Object.entries(CharacterChangeFilters).map(([name, filterMap]) => {
-              const filterKey = name as keyof typeof searchFilters
-              const value = searchFilters?.[filterKey] as string
-
-              if (!filterMap) return null
-              return (
-                <Popover key={`filter-${name}`}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className={cn(
-                        "w-[200px] flex-1 justify-between capitalize",
-                        value
-                          ? "slime bg-clip-text text-transparent"
-                          : "text-muted-foreground"
-                      )}
-                    >
-                      {value ?? `${name}`}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="max-h-60 w-full p-0">
-                    <RenderGuard renderIf={!!filterMap}>
-                      <Command>
-                        <CommandInput placeholder={`Search by ${name}...`} />
-                        <CommandEmpty>No {name} found.</CommandEmpty>
-                        <CommandGroup className="max-h-60 overflow-y-scroll">
-                          {Object.values(filterMap).map((filter) => (
-                            <CommandItem
-                              key={`filter-enum-${filter}`}
-                              className="capitalize"
-                              onSelect={(currentValue) => {
-                                onSearchChange({
-                                  key: name as keyof typeof searchFilters,
-                                  value:
-                                    currentValue === value
-                                      ? undefined
-                                      : currentValue,
-                                })
-                              }}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  (value?.toString() ?? "").toUpperCase() ===
-                                    filter.toUpperCase()
-                                    ? "opacity-100"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {filter}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </Command>
-                    </RenderGuard>
-                  </PopoverContent>
-                </Popover>
-              )
-            })}
-            <Toggle
-              aria-label="Reset Filters"
-              variant="outline"
-              onClick={resetFilters}
-              disabled={!hasFilters}
-            >
-              <RotateCw className="h-4 w-4" />
-            </Toggle>
-          </section>
-        </form>
-      </section>
+            <RotateCw className="h-4 w-4" />
+          </Toggle>
+        </section>
+      </form>
 
       <RenderGuard
         renderIf={
