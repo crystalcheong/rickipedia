@@ -16,7 +16,7 @@ export const Logo = ({ variant = "text" }: LogoProps) => {
   return (
     <div
       onClick={() => void router.push("/")}
-      className="inline-flex flex-row place-items-center gap-2"
+      className="inline-flex cursor-pointer flex-row place-items-center gap-2"
     >
       {variant === "image" && (
         <NextImage

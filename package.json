@@ -7,6 +7,9 @@
     "url": "https://crystalcheong.com/"
   },
   "description": "🛸 Rick and Morty character wiki",
+  "repository": {
+    "url": "https://github.com/crystalcheong/rickipedia"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

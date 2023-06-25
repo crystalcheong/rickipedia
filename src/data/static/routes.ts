@@ -8,7 +8,7 @@ export const AppRoutes = {
 
 export const ExternalLinks = {
   Github: {
-    href: "https://github.com/crystalcheong",
+    href: "https://github.com/crystalcheong/rickipedia",
     icon: Github,
   },
   API: {

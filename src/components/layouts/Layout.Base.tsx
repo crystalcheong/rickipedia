@@ -113,11 +113,11 @@ const BaseLayout = ({
                   target="_blank"
                   rel="noreferrer"
                   className={cn(
-                    "hover:slime text-muted-foreground hover:bg-clip-text hover:text-transparent sm:text-sm",
+                    "hover:slime group text-muted-foreground hover:bg-clip-text hover:text-transparent sm:text-sm",
                     "inline-flex flex-row place-content-center place-items-center gap-1"
                   )}
                 >
-                  <data.icon className="h-4 w-4" />
+                  <data.icon className="h-4 w-4 group-hover:text-[#8CE261]" />
                   <span className="sr-only sm:not-sr-only">{link}</span>
                 </Link>
               ))}
@@ -130,7 +130,10 @@ const BaseLayout = ({
                 key={`footer-route-${route}`}
                 href={href}
                 rel="noreferrer"
-                className="hover:slime text-muted-foreground hover:bg-clip-text hover:text-transparent sm:text-sm"
+                className={cn(
+                  "text-muted-foreground sm:text-sm",
+                  "hover:slime hover:bg-clip-text hover:text-transparent"
+                )}
               >
                 {route}
               </Link>

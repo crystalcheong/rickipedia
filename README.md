@@ -16,11 +16,9 @@
 - 🧱 Built with components from [shadcn](https://ui.shadcn.com/) & [Radix UI](https://www.radix-ui.com/)
 - 💨 Data fetched form [Rick And Morty API](https://rickandmortyapi.com/)
 
-
-
 #### Environments
-| Branch | Deployment | TRPC
-| ----------- | ----------- | ----------- |
-| [main](https://github.com/crystalcheong/rickipedia/tree/main) | [rickipedia.vercel.app](https://rickipedia.vercel.app/) |  [/api/trpc](https://rickipedia.vercel.app/api/trpc) |
-| [beta](https://github.com/crystalcheong/rickipedia/tree/beta) | [rickipedia-beta.vercel.app](https://rickipedia-beta.vercel.app/) | [/api/trpc](https://rickipedia-beta.vercel.app/api/trpc) |
 
+| Branch                                                        | Deployment                                                        | TRPC                                                     |
+| ------------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------- |
+| [main](https://github.com/crystalcheong/rickipedia/tree/main) | [rickipedia.vercel.app](https://rickipedia.vercel.app/)           | [/api/trpc](https://rickipedia.vercel.app/api/trpc)      |
+| [beta](https://github.com/crystalcheong/rickipedia/tree/beta) | [rickipedia-beta.vercel.app](https://rickipedia-beta.vercel.app/) | [/api/trpc](https://rickipedia-beta.vercel.app/api/trpc) |
