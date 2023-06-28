@@ -1,10 +1,12 @@
 import { useDrag } from "@use-gesture/react"
+import dynamic from "next/dynamic"
 import { useState } from "react"
 import { animated, interpolate, useSprings } from "react-spring"
 
-import CharacterCard from "@/components/Character.Card"
 import { type RickAndMorty } from "@/types/rickAndMorty"
 import { cn, getLimitedRandomArray, logger, LogLevel } from "@/utils"
+
+const CharacterCard = dynamic(() => import("./Character.Card"))
 
 // These two are just helpers, they curate spring data, values that are later being interpolated into css
 const to = (i: number) => ({
@@ -125,6 +127,7 @@ const CharacterDeck = ({ characters, limit = 5 }: CharacterDeckProps) => {
               className={cn("touch-none will-change-transform")}
             >
               <CharacterCard
+                tilt
                 character={character}
                 className={cn("shadow-lg")}
                 disableOnClick={isDragging || gone.has(i)}

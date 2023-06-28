@@ -101,7 +101,7 @@ const BaseLayout = ({
           <div
             className={cn(
               "flex flex-1 flex-row gap-3 sm:gap-8 md:gap-6",
-              "place-content-evenly sm:place-content-center"
+              "place-content-evenly md:place-content-center"
             )}
           >
             {Object.entries(AppRoutes)

@@ -115,7 +115,8 @@
   html {
     @apply scroll-smooth;
   }
-  body {
+  body,
+  body > div {
     @apply bg-background text-foreground;
     @apply overflow-x-hidden;
     font-feature-settings: "rlig" 1, "calt" 1;

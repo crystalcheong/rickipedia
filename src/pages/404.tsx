@@ -1,6 +1,9 @@
+import dynamic from "next/dynamic"
+
 import BaseLayout from "@/components/layouts/Layout.Base"
-import Unknown from "@/components/Unknown"
 import { cn } from "@/utils"
+
+const Unknown = dynamic(() => import("../components/Unknown"))
 
 const Error404Page = () => {
   return (

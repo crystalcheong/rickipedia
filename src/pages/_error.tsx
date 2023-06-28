@@ -1,8 +1,10 @@
 import { type NextPage, type NextPageContext } from "next"
+import dynamic from "next/dynamic"
 
 import BaseLayout from "@/components/layouts/Layout.Base"
-import Unknown from "@/components/Unknown"
 import { cn } from "@/utils"
+
+const Unknown = dynamic(() => import("../components/Unknown"))
 
 interface ErrorProps {
   statusCode: number

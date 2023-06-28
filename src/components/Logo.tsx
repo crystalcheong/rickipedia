@@ -19,6 +19,7 @@ export const Logo = ({ variant = "text", className }: LogoProps) => {
       onClick={() => void router.push("/")}
       className={cn(
         "inline-flex cursor-pointer flex-row place-items-center gap-2",
+        "group",
         className
       )}
     >
@@ -36,7 +37,7 @@ export const Logo = ({ variant = "text", className }: LogoProps) => {
             "my-0 mt-auto",
             "h-8 w-full md:h-12",
             "rounded-full",
-            "shadow-lg shadow-blue-500/50 hover:shadow-sm dark:shadow-green-500/50"
+            "shadow-lg shadow-blue-500/50 group-hover:shadow-sm dark:shadow-green-500/50"
           )}
         />
       )}
@@ -51,6 +52,7 @@ export const Logo = ({ variant = "text", className }: LogoProps) => {
           className={cn(
             "border-[#3898AA] dark:border-[#8CE261]",
             "rick dark:slime bg-clip-text text-transparent",
+            "group-hover:rick dark:group-hover:slime group-hover:bg-clip-border	group-hover:text-primary-foreground",
             "hidden uppercase md:block"
           )}
         >

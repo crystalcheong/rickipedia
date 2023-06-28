@@ -41,7 +41,7 @@ export declare namespace RickAndMorty {
     characters: string[]
   }
 
-  type SchemaType = "character" | "episode" | "location"
+  type SchemaType = "character" | "location" | "episode"
   //#endregion  //*======== SCHEMAS ===========
 
   //#endregion  //*======== FILTERS ===========

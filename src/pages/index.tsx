@@ -1,13 +1,15 @@
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import { Fragment } from "react"
 
-import CharacterDeck from "@/components/Character.Deck"
 import BaseLayout from "@/components/layouts/Layout.Base"
 import { RenderGuard } from "@/components/providers"
 import { Separator } from "@/components/ui"
 import { DefaultPaginationInfo } from "@/data/clients/rickAndMorty"
 import { api, cn } from "@/utils"
 import RickAndMortyLogo from "~/assets/RickAndMorty.svg"
+
+const CharacterDeck = dynamic(() => import("../components/Character.Deck"))
 
 const IndexPage = () => {
   const [
@@ -26,7 +28,7 @@ const IndexPage = () => {
   ])
   return (
     <BaseLayout className={cn("flex flex-col gap-16")}>
-      <header>
+      <header className="flex flex-col gap-8">
         <RickAndMortyLogo className="sm:36 h-24 w-full sm:h-36" />
         <RenderGuard renderIf={!!schemaLimits}>
           <aside
@@ -42,7 +44,7 @@ const IndexPage = () => {
                   href={`/${type}`}
                   className={cn(
                     "font-semibold uppercase",
-                    "text-muted-foreground",
+                    "text-muted-foreground underline-offset-4 hover:underline",
                     "max-w-prose text-center"
                   )}
                 >
