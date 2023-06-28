@@ -121,6 +121,10 @@
     @apply overflow-x-hidden;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  body > div {
+    @apply bg-transparent;
+  }
 }
 
 @layer utilities {
