@@ -117,11 +117,15 @@
   }
   body {
     @apply bg-background text-foreground;
+    @apply overflow-x-hidden;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer utilities {
+  .rick {
+    @apply bg-gradient-to-br from-[#42B4CA] to-[#3898AA];
+  }
   .slime {
     @apply bg-gradient-to-br from-[#C5DD5E] to-[#8CE261];
   }

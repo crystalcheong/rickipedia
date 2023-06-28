@@ -113,7 +113,7 @@ const LocationIdPage = () => {
           <header className="flex flex-row items-center gap-2">
             <h4>Characters</h4>
             {!!characterIds.length && (
-              <Badge className="slime">{characterIds.length}</Badge>
+              <Badge className="rick dark:slime">{characterIds.length}</Badge>
             )}
           </header>
           <div

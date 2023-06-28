@@ -22,6 +22,9 @@ export enum CharacterGender {
   genderless = "genderless",
   unknown = "unknown",
 }
+
+export const SchemaTypes = ["character", "episode", "location"] as const
+export type SchemaType = (typeof SchemaTypes)[number]
 //#endregion  //*======== EXPORT ZONE ===========
 
 const Endpoint = `https://rickandmortyapi.com/api`
@@ -40,9 +43,13 @@ const Routes: Record<string, string> = {
 export class RickAndMortyClient {
   private http: HTTP<typeof Routes>
   private static instance: RickAndMortyClient
+  private schemaLimits: Record<RickAndMorty.SchemaType, number>
 
   private constructor() {
     this.http = new HTTP(Endpoint, Routes)
+    this.schemaLimits = Object.fromEntries(
+      SchemaTypes.map((type) => [type, 0])
+    ) as Record<RickAndMorty.SchemaType, number>
   }
 
   static getInstance = (): RickAndMortyClient => {
@@ -75,11 +82,38 @@ export class RickAndMortyClient {
     type = "character",
   }: {
     idUrls: string[]
-    type?: "character" | "episode" | "location"
+    type?: RickAndMorty.SchemaType
   }): number[] => {
     const characterUrl = `${Endpoint}/${type}/`
     const ids: string = idUrls.toString().replaceAll(characterUrl, "")
     return this.parseIds(ids)
+  }
+
+  getSchemaLimits = async () => {
+    const emptyKeys: RickAndMorty.SchemaType[] = Object.entries(
+      this.schemaLimits
+    )
+      .filter(([, limit]) => limit < 1)
+      .map(([type]) => type as RickAndMorty.SchemaType)
+
+    for (const type of emptyKeys) {
+      switch (type) {
+        case "character": {
+          await this.getAllCharacters()
+          break
+        }
+        case "episode": {
+          await this.getAllEpisodes()
+          break
+        }
+        case "location": {
+          await this.getAllLocations()
+          break
+        }
+      }
+    }
+
+    return this.schemaLimits
   }
 
   getAllCharacters = async (
@@ -112,6 +146,10 @@ export class RickAndMortyClient {
         []) as RickAndMorty.Character[]
       characters.push(...charactersData)
 
+      // Update schema limits
+      this.schemaLimits.character =
+        (result?.info as Record<string, number>)?.count ?? 0
+
       logger(
         { breakpoint: "[rickAndMorty.ts:74]" },
         "RickAndMorty/getAllCharacters",
@@ -120,6 +158,7 @@ export class RickAndMortyClient {
           params,
           info: result?.info ?? {},
           count: characters.length,
+          schemaLimits: this.schemaLimits,
         }
       )
     } catch (error) {
@@ -205,6 +244,10 @@ export class RickAndMortyClient {
       const locationsData: RickAndMorty.Location[] = (result?.results ??
         []) as RickAndMorty.Location[]
       locations.push(...locationsData)
+
+      // Update schema limits
+      this.schemaLimits.location =
+        (result?.info as Record<string, number>)?.count ?? 0
 
       logger(
         { breakpoint: "[rickAndMorty.ts:74]" },
@@ -299,6 +342,10 @@ export class RickAndMortyClient {
       const episodesData: RickAndMorty.Episode[] = (result?.results ??
         []) as RickAndMorty.Episode[]
       episodes.push(...episodesData)
+
+      // Update schema limits
+      this.schemaLimits.episode =
+        (result?.info as Record<string, number>)?.count ?? 0
 
       logger(
         { breakpoint: "[rickAndMorty.ts:74]" },

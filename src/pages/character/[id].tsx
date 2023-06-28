@@ -103,7 +103,7 @@ const CharacterIdPage = () => {
           <header className="flex flex-row items-center gap-2">
             <h4>Locations</h4>
             {!!locationIds.length && (
-              <Badge className="slime">{locationIds.length}</Badge>
+              <Badge className="rick dark:slime">{locationIds.length}</Badge>
             )}
           </header>
           <div
@@ -123,7 +123,7 @@ const CharacterIdPage = () => {
           title={
             <header className="flex flex-row items-center gap-2">
               <h4>Episodes</h4>
-              <Badge className="slime">{episodesData.length}</Badge>
+              <Badge className="dark:slime rick">{episodesData.length}</Badge>
             </header>
           }
         />

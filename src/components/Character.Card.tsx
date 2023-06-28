@@ -19,11 +19,13 @@ import { cn } from "@/utils"
 
 interface CharacterCardProps extends CardProps {
   character: RickAndMorty.Character
+  disableOnClick?: boolean
 }
 
 const CharacterCard = ({
   character,
   className,
+  disableOnClick = false,
   tilt,
   tiltProps = {
     glareEnable: true,
@@ -36,6 +38,7 @@ const CharacterCard = ({
   const router = useRouter()
 
   const handleOnClick = () => {
+    if (disableOnClick) return
     void router.push(`/character/${character.id}`)
   }
   return (
@@ -46,8 +49,8 @@ const CharacterCard = ({
       className={cn(
         "relative cursor-pointer sm:w-64",
         tilt && "hover:z-20 hover:cursor-grab",
-        "shadow-green-500/50 hover:shadow-2xl",
-        "border-[#8CE261]",
+        "shadow-blue-500/50 hover:shadow-2xl dark:shadow-green-500/50",
+        "border-[#3898AA] dark:border-[#8CE261]",
         className
       )}
       {...rest}
@@ -64,7 +67,7 @@ const CharacterCard = ({
             "absolute left-0 top-0 z-10",
             "rounded-none rounded-br-md rounded-tl-md",
             "capitalize leading-[initial]",
-            "slime bg-gradient-to-br"
+            "rick dark:slime"
           )}
         >
           #{character.id}
@@ -104,12 +107,6 @@ const CharacterCard = ({
             const showSeperator = idx % 2 !== 0
             return (
               <Fragment key={`attr-${key}`}>
-                {showSeperator && (
-                  <Separator
-                    orientation="vertical"
-                    className="bg-[#8CE261]"
-                  />
-                )}
                 <p
                   className={cn(
                     "!m-0 flex max-w-prose flex-col text-center",
@@ -121,12 +118,10 @@ const CharacterCard = ({
                   </span>
                   <span className="block truncate font-semibold">{attr}</span>
                 </p>
-                {showSeperator && (
-                  <Separator
-                    orientation="vertical"
-                    className="bg-[#8CE261]"
-                  />
-                )}
+                <Separator
+                  orientation="vertical"
+                  className="rick dark:slime last:hidden"
+                />
               </Fragment>
             )
           })}

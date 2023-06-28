@@ -1,9 +1,34 @@
-import { Github, Globe2 } from "lucide-react"
+import {
+  Clapperboard,
+  Github,
+  Globe2,
+  Home,
+  Map,
+  Search,
+  Users,
+} from "lucide-react"
 
 export const AppRoutes = {
-  Home: "/",
-  Characters: "/character",
-  Locations: "/location",
+  Home: {
+    href: "/",
+    icon: Home,
+  },
+  Search: {
+    href: "/search",
+    icon: Search,
+  },
+  Characters: {
+    href: "/character",
+    icon: Users,
+  },
+  Locations: {
+    href: "/location",
+    icon: Map,
+  },
+  Episodes: {
+    href: "/episode",
+    icon: Clapperboard,
+  },
 }
 
 export const ExternalLinks = {

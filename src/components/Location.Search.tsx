@@ -304,7 +304,7 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
         href="#searchForm"
         scroll={false}
         className={cn(
-          "slime",
+          "rick dark:slime",
           "fixed bottom-[5%] right-[10%]",
           "p !h-auto !w-fit !p-0 text-accent",
           "rounded-full",
@@ -362,7 +362,9 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
                     role="combobox"
                     className={cn(
                       "w-[200px] flex-1 justify-between truncate capitalize",
-                      !value && "text-muted-foreground"
+                      value
+                        ? "rick dark:slime bg-clip-text text-transparent"
+                        : "text-muted-foreground"
                     )}
                   >
                     {value ?? `${name}`}

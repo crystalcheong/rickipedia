@@ -61,4 +61,29 @@ export const isValidMapKey = <K, V>({
   return isValidKey
 }
 
-export const copyObject = <T>(obj: T): T => JSON.parse(JSON.stringify(obj)) as T
+export const getCopiedObject = <T>(obj: T): T =>
+  JSON.parse(JSON.stringify(obj)) as T
+
+export const getRandomArrayIdx = <T>(array: T[]): number => {
+  if (array.length === 0) {
+    return 0
+  }
+  return Math.floor(Math.random() * array.length)
+}
+
+export const getRandomArrayElement = <T>(array: T[]): T | null =>
+  array[getRandomArrayIdx(array)] ?? null
+
+/**
+ * @title Array Limiter
+ * @description Limits an array while considering if the given array is less than the specified limit
+ */
+export const getLimitedArray = <T>(array: T[], limit: number): T[] =>
+  Array.from(array.slice(0, Math.min(array.length, limit)))
+
+export const getLimitedRandomArray = <T>(array: T[], limit: number): T[] => {
+  const randomizedArray = array.slice() // Create a copy of the original array
+  randomizedArray.sort(() => Math.random() - 0.5) // Randomize the copy using array sort
+
+  return getLimitedArray(randomizedArray, limit) // Apply the limit to the randomized array
+}

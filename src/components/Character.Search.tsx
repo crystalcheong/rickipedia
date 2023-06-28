@@ -300,7 +300,7 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
         href="#searchForm"
         scroll={false}
         className={cn(
-          "slime",
+          "rick dark:slime",
           "fixed bottom-[5%] right-[10%]",
           "p !h-auto !w-fit !p-0 text-accent",
           "rounded-full",
@@ -360,7 +360,7 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
                     className={cn(
                       "w-[200px] flex-1 justify-between capitalize",
                       value
-                        ? "slime bg-clip-text text-transparent"
+                        ? "rick dark:slime bg-clip-text text-transparent"
                         : "text-muted-foreground"
                     )}
                   >

@@ -11,6 +11,8 @@ import { createTRPCRouter, publicProcedure } from "@/server/api/trpc"
 const client: RickAndMortyClient = RickAndMortyClient.getInstance()
 
 export const rickAndMortyRouter = createTRPCRouter({
+  getSchemaLimits: publicProcedure.query(() => client.getSchemaLimits()),
+
   getAllCharacters: publicProcedure
     .input(
       z.object({

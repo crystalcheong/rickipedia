@@ -1,5 +1,6 @@
 import { GitBranch } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import { NextSeo, type NextSeoProps } from "next-seo"
 import {
   type ComponentProps,
@@ -12,7 +13,7 @@ import {
 import Logo from "@/components/Logo"
 import { RenderGuard } from "@/components/providers"
 import ThemeSwitch from "@/components/Theme.Switch"
-import { NextImage } from "@/components/ui"
+import { Button, NextImage } from "@/components/ui"
 import { AppRoutes, ExternalLinks } from "@/data/static"
 import { AppVersion } from "@/data/static/app"
 import { cn } from "@/utils"
@@ -68,6 +69,7 @@ const BaseLayout = ({
   seo,
   ...rest
 }: BaseLayoutProps) => {
+  const router = useRouter()
   return (
     <>
       <NextSeo {...seo} />
@@ -77,15 +79,51 @@ const BaseLayout = ({
         <aside className="space" />
       </div>
 
-      <header className={cn("sticky top-0 z-40", " backdrop-blur-md")}>
+      <header
+        className={cn(
+          "z-40 md:sticky md:top-0",
+          "fixed inset-x-0 bottom-0",
+          "backdrop-blur-md"
+        )}
+      >
         <nav
           className={cn(
             "mx-auto w-10/12",
             "flex flex-row place-content-between place-items-center gap-4",
-            "py-4"
+            "py-1"
           )}
         >
-          <Logo variant="image" />
+          <Logo
+            variant="image"
+            className=""
+          />
+
+          <div className="flex flex-1 flex-row place-content-center gap-3 sm:gap-5 md:gap-6">
+            {Object.entries(AppRoutes)
+              .filter(([route]) => !["Home"].includes(route))
+              .map(([route, info]) => {
+                const isActiveRoute: boolean =
+                  info.href === "/"
+                    ? router.asPath === info.href
+                    : router.asPath.includes(info.href)
+                return (
+                  <Link
+                    key={`footer-route-${route}`}
+                    href={info.href}
+                    rel="noreferrer"
+                  >
+                    <Button
+                      variant={isActiveRoute ? "default" : "link"}
+                      size="sm"
+                      className="!p-2"
+                    >
+                      <span className="sr-only md:not-sr-only">{route}</span>
+                      <info.icon className="h-4 w-4 md:hidden" />
+                    </Button>
+                  </Link>
+                )
+              })}
+          </div>
           <ThemeSwitch />
         </nav>
       </header>
@@ -102,7 +140,7 @@ const BaseLayout = ({
           <RenderGuard>{children}</RenderGuard>
         </SlimePortal>
       </main>
-      <footer className={cn("border-t")}>
+      <footer className={cn("border-t", "bg-background/80 backdrop-blur-sm")}>
         <main className={cn("mx-auto w-10/12", "py-4", "flex flex-col gap-4")}>
           <header className="flex flex-row flex-wrap place-content-between place-items-center gap-x-12 gap-y-1">
             <Logo />
@@ -115,11 +153,11 @@ const BaseLayout = ({
                   target="_blank"
                   rel="noreferrer"
                   className={cn(
-                    "hover:slime group text-muted-foreground hover:bg-clip-text hover:text-transparent sm:text-sm",
+                    "dark:hover:slime hover:rick group text-muted-foreground hover:bg-clip-text hover:text-transparent sm:text-sm",
                     "inline-flex flex-row place-content-center place-items-center gap-1"
                   )}
                 >
-                  <data.icon className="h-4 w-4 group-hover:text-[#8CE261]" />
+                  <data.icon className="h-4 w-4 group-hover:text-[#3898AA] dark:group-hover:text-[#8CE261]" />
                   <span className="sr-only sm:not-sr-only">{link}</span>
                 </Link>
               ))}
@@ -128,25 +166,25 @@ const BaseLayout = ({
                 href={`${ExternalLinks.Github.href}/releases/tag/v${AppVersion}`}
                 rel="noreferrer"
                 className={cn(
-                  "hover:slime group text-muted-foreground hover:bg-clip-text hover:text-transparent sm:text-sm",
+                  "dark:hover:slime hover:rick group text-muted-foreground hover:bg-clip-text hover:text-transparent sm:text-sm",
                   "inline-flex flex-row place-content-center place-items-center gap-1"
                 )}
               >
-                <GitBranch className="h-4 w-4 group-hover:text-[#8CE261]" />
+                <GitBranch className="h-4 w-4 group-hover:text-[#3898AA] dark:group-hover:text-[#8CE261]" />
                 Build: {AppVersion}
               </Link>
             </aside>
           </header>
 
           <aside className="flex flex-col gap-2 sm:flex-row">
-            {Object.entries(AppRoutes).map(([route, href]) => (
+            {Object.entries(AppRoutes).map(([route, { href }]) => (
               <Link
                 key={`footer-route-${route}`}
                 href={href}
                 rel="noreferrer"
                 className={cn(
                   "text-muted-foreground sm:text-sm",
-                  "hover:slime hover:bg-clip-text hover:text-transparent"
+                  "dark:hover:slime hover:rick hover:bg-clip-text hover:text-transparent"
                 )}
               >
                 {route}

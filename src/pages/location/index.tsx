@@ -17,7 +17,7 @@ const LocationPage = () => {
         <h1
           className={cn(
             "text-center",
-            "slime bg-clip-text font-schwifty text-transparent",
+            "rick dark:slime bg-clip-text font-schwifty text-transparent",
             "text-5xl sm:text-7xl lg:text-8xl"
           )}
         >
