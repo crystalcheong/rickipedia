@@ -98,7 +98,12 @@ const BaseLayout = ({
             className=""
           />
 
-          <div className="flex flex-1 flex-row place-content-center gap-3 sm:gap-5 md:gap-6">
+          <div
+            className={cn(
+              "flex flex-1 flex-row gap-3 sm:gap-8 md:gap-6",
+              "place-content-evenly sm:place-content-center"
+            )}
+          >
             {Object.entries(AppRoutes)
               .filter(([route]) => !["Home"].includes(route))
               .map(([route, info]) => {
