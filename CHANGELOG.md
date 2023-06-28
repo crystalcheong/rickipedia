@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/crystalcheong/rickipedia/compare/v0.4.2...v0.5.0) (2023-06-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* added deck stack
+
+### Features
+
+* added deck stack ([d669882](https://github.com/crystalcheong/rickipedia/commit/d669882e3db9b16c05497c3145bffc4042632e32))
+
+
+### Bug Fixes
+
+* top-level await ([a4a1a25](https://github.com/crystalcheong/rickipedia/commit/a4a1a25a6d432927e5747831bae7a1ae5b40d118))
+
 ### [0.4.2](https://github.com/crystalcheong/rickipedia/compare/v0.4.1...v0.4.2) (2023-06-25)
 
 
