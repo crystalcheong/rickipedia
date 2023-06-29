@@ -1,6 +1,5 @@
 import { type ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
-import React from "react"
 
 import { Button } from "@/components/ui/Button"
 import { type BaseDataTableProps, DataTable } from "@/components/ui/Table.Data"

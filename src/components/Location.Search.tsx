@@ -5,6 +5,7 @@ import {
   Filter,
   RotateCw,
 } from "lucide-react"
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import {
   type ChangeEvent,
@@ -21,7 +22,6 @@ import {
   type PaginationType,
   PaginationTypes,
 } from "@/components/Character.Search"
-import LocationCard from "@/components/Location.Card"
 import { RenderGuard } from "@/components/providers"
 import { Button } from "@/components/ui/Button"
 import {
@@ -38,9 +38,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/Popover"
 import { Toggle } from "@/components/ui/Toggle"
-import Unknown from "@/components/Unknown"
 import { type RickAndMorty } from "@/types/rickAndMorty.d"
 import { api, cn, getUniqueSetList, logger } from "@/utils"
+
+const Unknown = dynamic(() => import("./Unknown"))
+const Loading = dynamic(() => import("./Loading"))
+const LocationCard = dynamic(() => import("./Location.Card"))
 
 export const LocationBaseFilters: Record<string, string[]> = {
   type: ["Planet", "Cluster"],
@@ -428,15 +431,19 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
           !!(locations[currentPaginationType] ?? []).length
         }
         fallbackComponent={
-          <Unknown
-            hideRedirect
-            message={
-              <>
-                The location you are trying to search has been <br /> is not in
-                any dimension.
-              </>
-            }
-          />
+          isLoadingLocations || queryStatus.isFetching ? (
+            <Loading />
+          ) : (
+            <Unknown
+              hideRedirect
+              message={
+                <>
+                  The location you are trying to search has been <br /> is not
+                  in any dimension.
+                </>
+              }
+            />
+          )
         }
       >
         <section

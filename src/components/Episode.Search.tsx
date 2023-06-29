@@ -1,4 +1,5 @@
 import { Loader2 } from "lucide-react"
+import dynamic from "next/dynamic"
 import { type ComponentPropsWithoutRef, useCallback, useState } from "react"
 
 import {
@@ -6,10 +7,11 @@ import {
   type PaginationType,
   PaginationTypes,
 } from "@/components/Character.Search"
-import EpisodeTable from "@/components/Episode.Table"
 import { Button } from "@/components/ui/Button"
 import { type RickAndMorty } from "@/types/rickAndMorty.d"
 import { api, cn, logger } from "@/utils"
+
+const EpisodeTable = dynamic(() => import("./Episode.Table"))
 
 const InitialEpisodesStates: Record<PaginationType, RickAndMorty.Episode[]> =
   Object.fromEntries(PaginationTypes.map((type) => [type, []]))

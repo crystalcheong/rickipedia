@@ -7,6 +7,7 @@ import {
   Filter,
   RotateCw,
 } from "lucide-react"
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import {
   type ChangeEvent,
@@ -34,7 +35,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/Popover"
 import { Toggle } from "@/components/ui/Toggle"
-import Unknown from "@/components/Unknown"
 import {
   CharacterGender,
   CharacterSpecies,
@@ -44,7 +44,9 @@ import {
 import { type RickAndMorty } from "@/types/rickAndMorty"
 import { api, cn, logger } from "@/utils"
 
-import CharacterCard from "../components/Character.Card"
+const Unknown = dynamic(() => import("./Unknown"))
+const Loading = dynamic(() => import("./Loading"))
+const CharacterCard = dynamic(() => import("./Character.Card"))
 
 export const PaginationTypes: string[] = ["all", "search"]
 export type PaginationType = (typeof PaginationTypes)[number]
@@ -424,15 +426,19 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
           !!(characters[currentPaginationType] ?? []).length
         }
         fallbackComponent={
-          <Unknown
-            hideRedirect
-            message={
-              <>
-                The character you are trying to search has been <br /> is not in
-                any dimension.
-              </>
-            }
-          />
+          isLoadingCharacters || queryStatus.isFetching ? (
+            <Loading />
+          ) : (
+            <Unknown
+              hideRedirect
+              message={
+                <>
+                  The character you are trying to search has been <br /> is not
+                  in any dimension.
+                </>
+              }
+            />
+          )
         }
       >
         <section
