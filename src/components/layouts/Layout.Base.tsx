@@ -129,7 +129,6 @@ const BaseLayout = ({
                 )
               })}
           </div>
-          <ThemeSwitch />
         </nav>
       </header>
       <main
@@ -145,8 +144,20 @@ const BaseLayout = ({
           <RenderGuard>{children}</RenderGuard>
         </SlimePortal>
       </main>
-      <footer className={cn("border-t", "bg-background/80 backdrop-blur-sm")}>
-        <main className={cn("mx-auto w-10/12", "py-4", "flex flex-col gap-4")}>
+      <footer
+        className={cn(
+          "border-t",
+          "bg-background/80 backdrop-blur-sm",
+          "scroll-pb-10 pb-10 md:pb-0"
+        )}
+      >
+        <main
+          className={cn(
+            "mx-auto w-10/12",
+            "py-4",
+            "flex flex-col gap-4 sm:gap-1"
+          )}
+        >
           <header className="flex flex-row flex-wrap place-content-between place-items-center gap-x-12 gap-y-1">
             <Logo />
 
@@ -181,7 +192,12 @@ const BaseLayout = ({
             </aside>
           </header>
 
-          <aside className="flex flex-col gap-2 sm:flex-row">
+          <aside
+            className={cn(
+              "flex flex-col gap-2 sm:flex-row",
+              "place-items-start sm:place-items-center"
+            )}
+          >
             {Object.entries(AppRoutes).map(([route, { href }]) => (
               <Link
                 key={`footer-route-${route}`}
@@ -195,6 +211,7 @@ const BaseLayout = ({
                 {route}
               </Link>
             ))}
+            <ThemeSwitch className="mx-auto mt-6 sm:m-0 sm:ml-auto" />
           </aside>
         </main>
       </footer>

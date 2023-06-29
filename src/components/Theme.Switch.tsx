@@ -1,62 +1,63 @@
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu"
 import { Laptop, Moon, SunMedium } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Fragment } from "react"
 
 import { RenderGuard } from "@/components/providers"
-import { Button, Separator } from "@/components/ui"
+import { Separator } from "@/components/ui"
+import {
+  Menubar,
+  MenubarMenu,
+  type MenubarRoot,
+  MenubarTrigger,
+} from "@/components/ui/Menubar"
+import { cn } from "@/utils"
 
 const ThemeModes = {
-  light: {
-    icon: SunMedium,
-  },
   dark: {
     icon: Moon,
+  },
+  light: {
+    icon: SunMedium,
   },
   system: {
     icon: Laptop,
   },
 }
 
-const ThemeSwitch = () => {
+interface ThemeSwitchProps extends MenubarRoot {}
+const ThemeSwitch = ({ className, ...rest }: ThemeSwitchProps) => {
   const { theme, setTheme } = useTheme()
   return (
     <RenderGuard renderIf={!!theme}>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-4 w-4 px-0 md:h-8 md:w-8"
-          >
-            <ThemeModes.light.icon className="dark:hidden" />
-            <ThemeModes.dark.icon className="hidden dark:block" />
-            <span className="sr-only">Toggle theme</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          className="space-y-1 rounded-md border bg-background p-2"
-        >
+      <Menubar
+        className={cn("w-fit rounded-md", className)}
+        {...rest}
+      >
+        <MenubarMenu>
           {Object.entries(ThemeModes).map(([mode, data]) => (
             <Fragment key={`mode-${mode}`}>
-              <DropdownMenuItem
+              <MenubarTrigger
                 onClick={() => setTheme(mode)}
-                className="flex flex-row place-items-center gap-1"
+                className={cn(
+                  "flex flex-row place-items-center gap-1",
+                  theme === mode
+                    ? "rick dark:slime !text-black"
+                    : "text-muted-foreground"
+                )}
               >
-                <data.icon className="mr-2 h-4 w-4" />
-                <span className="capitalize">{mode}</span>
-              </DropdownMenuItem>
-              <Separator className="last:hidden" />
+                <data.icon className="h-4 w-4" />
+                <span className="sr-only capitalize md:not-sr-only">
+                  {mode}
+                </span>
+              </MenubarTrigger>
+              <Separator
+                className="last:hidden"
+                orientation="vertical"
+              />
             </Fragment>
           ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </MenubarMenu>
+      </Menubar>
     </RenderGuard>
   )
 }

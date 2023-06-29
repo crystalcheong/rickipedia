@@ -305,7 +305,7 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
         scroll={false}
         className={cn(
           "rick dark:slime",
-          "fixed bottom-[5%] right-[10%]",
+          "fixed bottom-[10%] right-[10%]",
           "p !h-auto !w-fit !p-0 text-accent",
           "rounded-full",
           "animate-bounce",
