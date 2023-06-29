@@ -1,11 +1,5 @@
 import { type RickAndMorty } from "@/types/rickAndMorty.d"
-import {
-  getBaseUrl,
-  getUniqueObjectListwithKeys,
-  HTTP,
-  logger,
-  LogLevel,
-} from "@/utils"
+import { getUniqueObjectListwithKeys, HTTP, logger, LogLevel } from "@/utils"
 
 //#endregion  //*======== EXPORT ZONE ===========
 export const DefaultPaginationInfo: RickAndMorty.PaginationInfo = {
@@ -55,7 +49,6 @@ export class RickAndMortyClient {
     const defaultHeaders = {
       Mode: "cors",
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
       "Access-Control-Allow-Headers": "X-Token",
     }
     this.http = new HTTP(Endpoint, Routes, defaultHeaders)
