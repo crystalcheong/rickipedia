@@ -47,7 +47,8 @@ export class RickAndMortyClient {
 
   private constructor() {
     const defaultHeaders = {
-      Mode: "cors",
+      "Sec-Fetch-Mode": "cors",
+      "Sec-Fetch-Site": "same-origin",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Headers": "X-Token",
     }
