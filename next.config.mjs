@@ -32,13 +32,13 @@ const config = {
     ],
   },
 
-  // CSP + Redirects
-  headers: async () => [
-    {
-      source: "/(.*)",
-      headers: securityHeaders,
-    },
-  ],
+  // // CSP + Redirects
+  // headers: async () => [
+  //   {
+  //     source: "/(.*)",
+  //     headers: securityHeaders,
+  //   },
+  // ],
 
   // SVGR
   webpack: (config) => {

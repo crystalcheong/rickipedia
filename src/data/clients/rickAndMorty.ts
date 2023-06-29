@@ -1,5 +1,11 @@
 import { type RickAndMorty } from "@/types/rickAndMorty.d"
-import { getUniqueObjectListwithKeys, HTTP, logger, LogLevel } from "@/utils"
+import {
+  getBaseUrl,
+  getUniqueObjectListwithKeys,
+  HTTP,
+  logger,
+  LogLevel,
+} from "@/utils"
 
 //#endregion  //*======== EXPORT ZONE ===========
 export const DefaultPaginationInfo: RickAndMorty.PaginationInfo = {
@@ -46,7 +52,12 @@ export class RickAndMortyClient {
   private schemaLimits: Record<RickAndMorty.SchemaType, number>
 
   private constructor() {
-    this.http = new HTTP(Endpoint, Routes)
+    const defaultHeaders = {
+      "Access-Control-Allow-Origin": getBaseUrl(),
+      "Access-Control-Allow-Methods": "GET, OPTIONS, POST, PUT",
+      "Access-Control-Allow-Headers": "X-Token",
+    }
+    this.http = new HTTP(Endpoint, Routes, defaultHeaders)
     this.schemaLimits = Object.fromEntries(
       SchemaTypes.map((type) => [type, 0])
     ) as Record<RickAndMorty.SchemaType, number>
