@@ -3,6 +3,7 @@ import { Fragment } from "react"
 
 import { RenderGuard } from "@/components/providers"
 import { Separator } from "@/components/ui"
+import RollingNumbers from "@/components/ui/RollingNumbers"
 import { api, cn } from "@/utils"
 import RickAndMortyLogo from "~/assets/RickAndMorty.svg"
 
@@ -30,9 +31,11 @@ const RickAndMortyTitle = () => {
                   "max-w-prose text-center"
                 )}
               >
-                <span className="rick dark:slime bg-clip-text text-transparent">
-                  {limit}&nbsp;
-                </span>
+                <RollingNumbers
+                  className="rick dark:slime bg-clip-text text-transparent"
+                  value={limit}
+                />
+                &nbsp;
                 {type}s
               </Link>
               <Separator
