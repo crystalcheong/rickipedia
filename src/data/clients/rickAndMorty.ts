@@ -53,8 +53,9 @@ export class RickAndMortyClient {
 
   private constructor() {
     const defaultHeaders = {
-      "Access-Control-Allow-Origin": getBaseUrl(),
-      "Access-Control-Allow-Methods": "GET, OPTIONS, POST, PUT",
+      Mode: "cors",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
       "Access-Control-Allow-Headers": "X-Token",
     }
     this.http = new HTTP(Endpoint, Routes, defaultHeaders)
