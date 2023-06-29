@@ -46,13 +46,7 @@ export class RickAndMortyClient {
   private schemaLimits: Record<RickAndMorty.SchemaType, number>
 
   private constructor() {
-    const defaultHeaders = {
-      "Sec-Fetch-Mode": "cors",
-      "Sec-Fetch-Site": "same-origin",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "X-Token",
-    }
-    this.http = new HTTP(Endpoint, Routes, defaultHeaders)
+    this.http = new HTTP(Endpoint, Routes)
     this.schemaLimits = Object.fromEntries(
       SchemaTypes.map((type) => [type, 0])
     ) as Record<RickAndMorty.SchemaType, number>

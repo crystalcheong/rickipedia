@@ -18,7 +18,7 @@
 
 #### Environments
 
-| Branch                                                        | Deployment                                                        | TRPC                                                     |
-| ------------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------- |
-| [main](https://github.com/crystalcheong/rickipedia/tree/main) | [rickipedia.vercel.app](https://rickipedia.vercel.app/)           | [/api/trpc](https://rickipedia.vercel.app/api/trpc)      |
-| [beta](https://github.com/crystalcheong/rickipedia/tree/beta) | [rickipedia-beta.vercel.app](https://rickipedia-beta.vercel.app/) | [/api/trpc](https://rickipedia-beta.vercel.app/api/trpc) |
+| Branch                                                        | Deployment                                                        |
+| ------------------------------------------------------------- | ----------------------------------------------------------------- |
+| [main](https://github.com/crystalcheong/rickipedia/tree/main) | [rickipedia.vercel.app](https://rickipedia.vercel.app/)           |
+| [beta](https://github.com/crystalcheong/rickipedia/tree/beta) | [rickipedia-beta.vercel.app](https://rickipedia-beta.vercel.app/) |
