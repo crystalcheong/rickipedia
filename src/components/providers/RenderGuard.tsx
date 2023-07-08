@@ -10,13 +10,13 @@ import ErrorBoundary from "@/components/providers/ErrorBoundary"
 
 interface Props extends PropsWithChildren {
   renderIf?: boolean
-  fallbackComponent?: ReactNode
+  fallback?: ReactNode
 }
 
 export const RenderGuard: FC<Props> = ({
   children,
   renderIf = true,
-  fallbackComponent,
+  fallback,
 }: Props) => {
   const [mounted, setMounted] = useState(false)
 
@@ -26,7 +26,7 @@ export const RenderGuard: FC<Props> = ({
 
   return (
     <ErrorBoundary>
-      {renderIf && mounted ? children : fallbackComponent ?? null}
+      {renderIf && mounted ? children : fallback ?? null}
     </ErrorBoundary>
   )
 }

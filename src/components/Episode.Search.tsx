@@ -8,12 +8,12 @@ import {
   PaginationTypes,
 } from "@/components/Character.Search"
 import { Button } from "@/components/ui/Button"
-import { type RickAndMorty } from "@/types/rickAndMorty.d"
+import { type Episode } from "@/types/rickAndMorty"
 import { api, cn, logger } from "@/utils"
 
 const EpisodeTable = dynamic(() => import("./Episode.Table"))
 
-const InitialEpisodesStates: Record<PaginationType, RickAndMorty.Episode[]> =
+const InitialEpisodesStates: Record<PaginationType, Episode[]> =
   Object.fromEntries(PaginationTypes.map((type) => [type, []]))
 
 type EpisodeSearchProps = ComponentPropsWithoutRef<"main">
@@ -49,7 +49,7 @@ const EpisodeSearch = ({ className, ...rest }: EpisodeSearchProps) => {
         enabled:
           (!(episodes["all"] ?? []).length || queryStatus.isFetching) &&
           !queryStatus.isEnd,
-        onSuccess: (newEpisodes: RickAndMorty.Episode[]) => {
+        onSuccess: (newEpisodes: Episode[]) => {
           setEpisodes((state) => ({
             ...state,
             [currentPaginationType]: isFirstQuery

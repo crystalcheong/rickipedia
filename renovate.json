@@ -7,5 +7,5 @@
   "updatePinnedDependencies": false,
   "stabilityDays": 2,
   "timezone": "Asia/Singapore",
-  "schedule": ["before 1am on Monday"]
+  "baseBranches": ["beta"]
 }

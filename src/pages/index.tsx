@@ -26,7 +26,7 @@ const IndexPage = () => {
 
       <RenderGuard
         renderIf={!isLoadingCharacters && !!charactersData.length}
-        fallbackComponent={isLoadingCharacters && <Loading />}
+        fallback={isLoadingCharacters && <Loading />}
       >
         <CharacterDeck characters={charactersData} />
       </RenderGuard>

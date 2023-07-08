@@ -3,9 +3,9 @@ import { ArrowUpDown } from "lucide-react"
 
 import { Button } from "@/components/ui/Button"
 import { type BaseDataTableProps, DataTable } from "@/components/ui/Table.Data"
-import { type RickAndMorty } from "@/types/rickAndMorty.d"
+import { type Episode } from "@/types/rickAndMorty"
 
-const episodeColumns: ColumnDef<RickAndMorty.Episode>[] = [
+const episodeColumns: ColumnDef<Episode>[] = [
   {
     accessorKey: "episode",
     header: ({ column }) => {
@@ -41,7 +41,7 @@ const episodeColumns: ColumnDef<RickAndMorty.Episode>[] = [
 ]
 
 interface EpisodeTable extends BaseDataTableProps {
-  episodes: RickAndMorty.Episode[]
+  episodes: Episode[]
   columns?: typeof episodeColumns
 }
 

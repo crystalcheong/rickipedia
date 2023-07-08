@@ -1,3 +1,4 @@
+import { useAuth } from "@clerk/nextjs"
 import {
   ArrowUpCircle,
   Check,
@@ -37,10 +38,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/Popover"
+import RollingNumbers from "@/components/ui/RollingNumbers"
 import { Toggle } from "@/components/ui/Toggle"
-import { type RickAndMorty } from "@/types/rickAndMorty.d"
+import { type Favourite } from "@/data/db/favourites/schema"
+import { type Location, type PaginationInfo } from "@/types/rickAndMorty"
 import { api, cn, getUniqueSetList, logger } from "@/utils"
-
 const Unknown = dynamic(() => import("./Unknown"))
 const Loading = dynamic(() => import("./Loading"))
 const LocationCard = dynamic(() => import("./Location.Card"))
@@ -54,17 +56,20 @@ export const LocationChangeFilters: Record<string, string[]> = {
   dimension: ["Dimension C-137", "unknown"],
 }
 
-const InitialLocationsStates: Record<PaginationType, RickAndMorty.Location[]> =
+const InitialLocationsStates: Record<PaginationType, Location[]> =
   Object.fromEntries(PaginationTypes.map((type) => [type, []]))
 
-const InitialSearchState: Partial<RickAndMorty.Location> = {
+const InitialSearchState: Partial<Location> = {
   name: "",
 }
 
 type LocationSearchProps = ComponentPropsWithoutRef<"main">
 
 const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
+  const { userId } = useAuth()
+
   //#endregion  //*======== STATES ===========
+  const [favouriteIds, setFavouriteIds] = useState<Favourite["schemaId"][]>([])
   const [changeFilters, setChangeFilters] = useState<
     typeof LocationChangeFilters
   >(LocationChangeFilters)
@@ -103,7 +108,7 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
         enabled:
           (!(locations["all"] ?? []).length || queryStatus.isFetching) &&
           !queryStatus.isEnd,
-        onSuccess: (newLocations: RickAndMorty.Location[]) => {
+        onSuccess: (newLocations: Location[]) => {
           setLocations((state) => ({
             ...state,
             [currentPaginationType]: isFirstQuery
@@ -130,6 +135,17 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
         },
       }
     )
+  api.favourites.getAll.useQuery(undefined, {
+    initialData: [],
+    enabled: !!userId,
+    onSuccess: (data) => {
+      setFavouriteIds(
+        data
+          .filter(({ schemaType }) => schemaType === "location")
+          .map(({ schemaId }) => schemaId)
+      )
+    },
+  })
   //#endregion  //*======== QUERIES ===========
 
   //#endregion  //*======== UTILS ===========
@@ -142,11 +158,11 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
     // Reset
     setPaginations({
       ...paginations,
-      [type]: InitialPaginationStates[type] as RickAndMorty.PaginationInfo,
+      [type]: InitialPaginationStates[type] as PaginationInfo,
     })
     setLocations({
       ...locations,
-      [type]: InitialLocationsStates[type] as RickAndMorty.Location[],
+      [type]: InitialLocationsStates[type] as Location[],
     })
   }
 
@@ -308,7 +324,7 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
         scroll={false}
         className={cn(
           "rick dark:slime",
-          "fixed bottom-[10%] right-[10%]",
+          "fixed bottom-[10%] right-[10%] z-10",
           "p !h-auto !w-fit !p-0 text-accent",
           "rounded-full",
           "animate-bounce",
@@ -423,6 +439,14 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
             <RotateCw className="h-4 w-4" />
           </Toggle>
         </section>
+
+        <p className="max-w-prose px-3 text-sm">
+          Found: &nbsp;
+          <RollingNumbers
+            className="rick dark:slime bg-clip-text font-semibold text-transparent"
+            value={(locations[currentPaginationType] ?? []).length}
+          />
+        </p>
       </form>
 
       <RenderGuard
@@ -430,7 +454,7 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
           !(isLoadingLocations || queryStatus.isFetching) ||
           !!(locations[currentPaginationType] ?? []).length
         }
-        fallbackComponent={
+        fallback={
           isLoadingLocations || queryStatus.isFetching ? (
             <Loading />
           ) : (
@@ -458,6 +482,7 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
             <LocationCard
               key={location.id}
               location={location}
+              isFavourite={favouriteIds.includes(location.id)}
             />
           ))}
         </section>

@@ -3,7 +3,7 @@ import dynamic from "next/dynamic"
 import { useState } from "react"
 import { animated, interpolate, useSprings } from "react-spring"
 
-import { type RickAndMorty } from "@/types/rickAndMorty"
+import { type Character } from "@/types/rickAndMorty"
 import { cn, getLimitedRandomArray, logger, LogLevel } from "@/utils"
 
 const CharacterCard = dynamic(() => import("./Character.Card"))
@@ -27,14 +27,14 @@ const isDragEvent = (eventType: string) => {
   return dragEvents.includes(eventType.toLowerCase())
 }
 interface CharacterDeckProps {
-  characters: RickAndMorty.Character[]
+  characters: Character[]
   limit?: number
 }
 
 const CharacterDeck = ({ characters, limit = 5 }: CharacterDeckProps) => {
-  const [deckCharacters, setDeckCharacters] = useState<
-    RickAndMorty.Character[]
-  >(getLimitedRandomArray(characters, limit))
+  const [deckCharacters, setDeckCharacters] = useState<Character[]>(
+    getLimitedRandomArray(characters, limit)
+  )
 
   const [isDragging, setIsDragging] = useState<boolean>(false)
   const [gone] = useState(() => new Set()) // The set flags all the cards that are flicked out

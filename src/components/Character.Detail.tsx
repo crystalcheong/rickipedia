@@ -1,19 +1,27 @@
-import { type ComponentPropsWithoutRef, Fragment } from "react"
+import { useAuth, useClerk } from "@clerk/nextjs"
+import { Bookmark, BookmarkPlus } from "lucide-react"
+import { useRouter } from "next/router"
+import { type ComponentPropsWithoutRef, Fragment, memo, useState } from "react"
 
 import { CharacterChangeFilters } from "@/components/Character.Search"
+import { Button } from "@/components/ui"
 import { NextImage } from "@/components/ui/Image"
 import { Separator } from "@/components/ui/Separator"
-import { CharacterStatus } from "@/data/clients/rickAndMorty"
-import { type RickAndMorty } from "@/types/rickAndMorty.d"
-import { cn } from "@/utils"
+import { type Favourite } from "@/data/db/favourites/schema"
+import { type Character, CharacterStatus } from "@/types/rickAndMorty"
+import { api, cn } from "@/utils"
 
 interface CharacterDetailProps extends ComponentPropsWithoutRef<"section"> {
-  character: RickAndMorty.Character
+  character: Character
+  isFavourite?: boolean
+  disableFavourite?: boolean
 }
 
 const CharacterDetail = ({
   character,
   className,
+  isFavourite = false,
+  disableFavourite = false,
   ...rest
 }: CharacterDetailProps) => {
   const location =
@@ -24,6 +32,44 @@ const CharacterDetail = ({
     character.origin.name === CharacterStatus.unknown
       ? "???"
       : character.origin.name
+
+  const router = useRouter()
+  const clerk = useClerk()
+  const { userId } = useAuth()
+  const [favourite, setFavourite] = useState<boolean>(isFavourite)
+
+  //#endregion  //*======== QUERIES ===========
+  const createFavourite = api.favourites.create.useMutation({
+    onSuccess: () => {
+      setFavourite(true)
+    },
+  })
+  const deleteFavourite = api.favourites.delete.useMutation({
+    onSuccess: () => {
+      setFavourite(false)
+    },
+  })
+  //#endregion  //*======== QUERIES ===========
+
+  const handleToggleFavourite = () => {
+    if (!character) return
+    if (!userId)
+      return clerk.openSignIn({
+        redirectUrl: router.asPath,
+      })
+
+    const params: Pick<Favourite, "schemaId" | "schemaType"> = {
+      schemaType: "character",
+      schemaId: character.id,
+    }
+    if (favourite) {
+      return deleteFavourite.mutate(params)
+    } else {
+      return createFavourite.mutate(params)
+    }
+  }
+
+  const FavouriteIcon = memo(favourite ? BookmarkPlus : Bookmark)
 
   return (
     <main
@@ -86,7 +132,7 @@ const CharacterDetail = ({
           )}
         >
           {Object.keys(CharacterChangeFilters).map((name, idx) => {
-            const key = name as keyof RickAndMorty.Character
+            const key = name as keyof Character
             let attr = (character?.[key] ?? "") as string
             if (attr === CharacterStatus.unknown) attr = "???"
             const showSeperator = idx % 2 !== 0
@@ -109,6 +155,17 @@ const CharacterDetail = ({
             )
           })}
         </div>
+
+        {!disableFavourite && (
+          <Button
+            variant={favourite ? "default" : "outline"}
+            onClick={handleToggleFavourite}
+            className={cn("mt-6 gap-2", favourite && "rick dark:slime")}
+          >
+            <FavouriteIcon className="h-4 w-4" />
+            Favourite
+          </Button>
+        )}
       </article>
     </main>
   )

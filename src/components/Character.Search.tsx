@@ -1,5 +1,6 @@
 "use client"
 
+import { useAuth, useClerk } from "@clerk/nextjs"
 import {
   ArrowUpCircle,
   Check,
@@ -9,6 +10,7 @@ import {
 } from "lucide-react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import {
   type ChangeEvent,
   type ComponentPropsWithoutRef,
@@ -34,14 +36,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/Popover"
+import RollingNumbers from "@/components/ui/RollingNumbers"
 import { Toggle } from "@/components/ui/Toggle"
+import { type Favourite } from "@/data/db/favourites/schema"
 import {
+  type Character,
+  type CharacterFilterInfo,
   CharacterGender,
   CharacterSpecies,
   CharacterStatus,
   DefaultPaginationInfo,
-} from "@/data/clients/rickAndMorty"
-import { type RickAndMorty } from "@/types/rickAndMorty"
+  type PaginationInfo,
+} from "@/types/rickAndMorty"
 import { api, cn, logger } from "@/utils"
 
 const Unknown = dynamic(() => import("./Unknown"))
@@ -56,12 +62,10 @@ export const InitialPaginationStates: Record<
 > = Object.fromEntries(
   PaginationTypes.map((type) => [type, DefaultPaginationInfo])
 )
-const InitialCharactersStates: Record<
-  PaginationType,
-  RickAndMorty.Character[]
-> = Object.fromEntries(PaginationTypes.map((type) => [type, []]))
+const InitialCharactersStates: Record<PaginationType, Character[]> =
+  Object.fromEntries(PaginationTypes.map((type) => [type, []]))
 
-const InitialSearchState: Partial<RickAndMorty.CharacterFilterInfo> = {
+const InitialSearchState: Partial<CharacterFilterInfo> = {
   name: "",
 }
 
@@ -74,7 +78,12 @@ export const CharacterChangeFilters: Record<string, Record<string, string>> = {
 type CharacterSearchProps = ComponentPropsWithoutRef<"main">
 
 const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
+  const router = useRouter()
+  const clerk = useClerk()
+  const { userId } = useAuth()
+
   //#endregion  //*======== STATES ===========
+  const [favouriteIds, setFavouriteIds] = useState<Favourite["schemaId"][]>([])
   const [characters, setCharacters] = useState<typeof InitialCharactersStates>(
     InitialCharactersStates
   )
@@ -109,7 +118,7 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
         enabled:
           (!(characters["all"] ?? []).length || queryStatus.isFetching) &&
           !queryStatus.isEnd,
-        onSuccess: (newCharacters: RickAndMorty.Character[]) => {
+        onSuccess: (newCharacters: Character[]) => {
           setCharacters((state) => ({
             ...state,
             [currentPaginationType]: isFirstQuery
@@ -124,6 +133,25 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
         },
       }
     )
+
+  api.favourites.getAll.useQuery(undefined, {
+    initialData: [],
+    enabled: !!userId,
+    onSuccess: (data) => {
+      setFavouriteIds(
+        data
+          .filter(({ schemaType }) => schemaType === "character")
+          .map(({ schemaId }) => schemaId)
+      )
+    },
+    onSettled: (_, error) => {
+      if (error?.data?.code === "UNAUTHORIZED") {
+        return clerk.openSignIn({
+          redirectUrl: router.asPath,
+        })
+      }
+    },
+  })
   //#endregion  //*======== QUERIES ===========
 
   //#endregion  //*======== UTILS ===========
@@ -136,11 +164,11 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
     // Reset
     setPaginations({
       ...paginations,
-      [type]: InitialPaginationStates[type] as RickAndMorty.PaginationInfo,
+      [type]: InitialPaginationStates[type] as PaginationInfo,
     })
     setCharacters({
       ...characters,
-      [type]: InitialCharactersStates[type] as RickAndMorty.Character[],
+      [type]: InitialCharactersStates[type] as Character[],
     })
   }
 
@@ -303,7 +331,7 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
         scroll={false}
         className={cn(
           "rick dark:slime",
-          "fixed bottom-[10%] right-[10%]",
+          "fixed bottom-[10%] right-[10%] z-10",
           "p !h-auto !w-fit !p-0 text-accent",
           "rounded-full",
           "animate-bounce",
@@ -312,6 +340,7 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
       >
         <ArrowUpCircle className="h-8 w-8 hover:scale-110" />
       </Link>
+
       <form
         id="searchForm"
         method="get"
@@ -418,6 +447,14 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
             <RotateCw className="h-4 w-4" />
           </Toggle>
         </section>
+
+        <p className="max-w-prose px-3 text-sm">
+          Found: &nbsp;
+          <RollingNumbers
+            className="rick dark:slime bg-clip-text font-semibold text-transparent"
+            value={(characters[currentPaginationType] ?? []).length}
+          />
+        </p>
       </form>
 
       <RenderGuard
@@ -425,7 +462,7 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
           !(isLoadingCharacters || queryStatus.isFetching) ||
           !!(characters[currentPaginationType] ?? []).length
         }
-        fallbackComponent={
+        fallback={
           isLoadingCharacters || queryStatus.isFetching ? (
             <Loading />
           ) : (
@@ -453,6 +490,7 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
             <CharacterCard
               key={character.id}
               character={character}
+              isFavourite={favouriteIds.includes(character.id)}
               tilt
             />
           ))}

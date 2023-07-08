@@ -1,4 +1,5 @@
 import {
+  BookmarkPlus,
   Clapperboard,
   Github,
   Globe2,
@@ -28,6 +29,10 @@ export const AppRoutes = {
   Episodes: {
     href: "/episode",
     icon: Clapperboard,
+  },
+  Favourites: {
+    href: "/favourites",
+    icon: BookmarkPlus,
   },
 }
 

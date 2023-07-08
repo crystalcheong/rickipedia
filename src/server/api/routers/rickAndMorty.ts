@@ -1,12 +1,12 @@
 import { z } from "zod"
 
+import { RickAndMortyClient } from "@/data/clients/rickAndMorty"
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc"
 import {
   CharacterGender,
   CharacterSpecies,
   CharacterStatus,
-  RickAndMortyClient,
-} from "@/data/clients/rickAndMorty"
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc"
+} from "@/types/rickAndMorty"
 
 const client: RickAndMortyClient = RickAndMortyClient.getInstance()
 

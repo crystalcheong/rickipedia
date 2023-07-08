@@ -1,3 +1,4 @@
+import { useAuth, useClerk } from "@clerk/nextjs"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
 import { useState } from "react"
@@ -6,7 +7,7 @@ import BaseLayout from "@/components/layouts/Layout.Base"
 import { RenderGuard } from "@/components/providers"
 import { Badge } from "@/components/ui/Badge"
 import { RickAndMortyClient } from "@/data/clients/rickAndMorty"
-import { type RickAndMorty } from "@/types/rickAndMorty"
+import { type Character, type Location } from "@/types/rickAndMorty"
 import { api, cn, getUniqueSetList } from "@/utils"
 
 const CharacterDetail = dynamic(
@@ -18,6 +19,8 @@ const LocationCard = dynamic(() => import("../../components/Location.Card"))
 const CharacterIdPage = () => {
   const router = useRouter()
   const { id } = router.query
+  const clerk = useClerk()
+  const { userId } = useAuth()
 
   const ids: number[] = RickAndMortyClient.parseIds(id)
 
@@ -34,7 +37,7 @@ const CharacterIdPage = () => {
     {
       initialData: [],
       enabled: !!ids.length,
-      onSuccess: (data: RickAndMorty.Character[]) => {
+      onSuccess: (data: Character[]) => {
         const getLocationId = (locationUrl: string): number =>
           parseInt(locationUrl.slice(locationUrl.lastIndexOf("/") + 1))
         const locationIds: number[] = data.map(({ location }) =>
@@ -59,28 +62,49 @@ const CharacterIdPage = () => {
     }
   )
 
-  const [{ data: locationsData = [] }, { data: episodesData = [] }] =
-    api.useQueries((trpc) => [
-      trpc.rickAndMorty.getLocations(
-        {
-          ids: locationIds,
-        },
-        {
-          initialData: [],
-          enabled: !!locationIds.length && !!charactersData.length,
+  const [
+    { data: locationsData = [] as Location[] },
+    { data: episodesData = [] },
+    { data: favouritesData = [] },
+  ] = api.useQueries((trpc) => [
+    trpc.rickAndMorty.getLocations(
+      {
+        ids: locationIds,
+      },
+      {
+        initialData: [],
+        enabled: !!locationIds.length && !!charactersData.length,
+      }
+    ),
+    trpc.rickAndMorty.getEpisodes(
+      {
+        ids: episodeIds,
+      },
+      {
+        initialData: [],
+        enabled: !!episodeIds.length && !!charactersData.length,
+      }
+    ),
+    trpc.favourites.getAll(undefined, {
+      initialData: [],
+      enabled: !!userId && !!charactersData.length,
+      onSettled: (_, error) => {
+        if (error?.data?.code === "UNAUTHORIZED") {
+          return clerk.openSignIn({
+            redirectUrl: router.asPath,
+          })
         }
-      ),
-      trpc.rickAndMorty.getEpisodes(
-        {
-          ids: episodeIds,
-        },
-        {
-          initialData: [],
-          enabled: !!episodeIds.length && !!charactersData.length,
-        }
-      ),
-    ])
+      },
+    }),
+  ])
   //#endregion  //*======== QUERIES ===========
+
+  const favCharacterIds = favouritesData
+    .filter(({ schemaType }) => schemaType === "character")
+    .map(({ schemaId }) => schemaId)
+  const favLocationIds = favouritesData
+    .filter(({ schemaType }) => schemaType === "location")
+    .map(({ schemaId }) => schemaId)
 
   return (
     <BaseLayout
@@ -95,6 +119,7 @@ const CharacterIdPage = () => {
             <CharacterDetail
               character={character}
               key={character.id}
+              isFavourite={favCharacterIds.includes(character.id)}
             />
           ))}
         </main>
@@ -113,6 +138,7 @@ const CharacterIdPage = () => {
               <LocationCard
                 key={location.id}
                 location={location}
+                isFavourite={favLocationIds.includes(location.id)}
               />
             ))}
           </div>

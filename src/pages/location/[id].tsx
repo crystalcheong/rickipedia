@@ -6,9 +6,8 @@ import BaseLayout from "@/components/layouts/Layout.Base"
 import { RenderGuard } from "@/components/providers"
 import { Badge } from "@/components/ui/Badge"
 import { RickAndMortyClient } from "@/data/clients/rickAndMorty"
-import { type RickAndMorty } from "@/types/rickAndMorty"
+import { type Location } from "@/types/rickAndMorty"
 import { api, cn, getUniqueSetList } from "@/utils"
-
 const CharacterCard = dynamic(() => import("../../components/Character.Card"))
 
 const LocationIdPage = () => {
@@ -29,7 +28,7 @@ const LocationIdPage = () => {
     {
       initialData: [],
       enabled: !!ids.length,
-      onSuccess: (data: RickAndMorty.Location[]) => {
+      onSuccess: (data: Location[]) => {
         const characterIds: number[] = getUniqueSetList(
           data.reduce(
             (cIds: number[] = [], { residents }) =>
@@ -129,6 +128,7 @@ const LocationIdPage = () => {
                 character={character}
                 className="shrink-0 snap-center snap-always"
                 tilt
+                disableFavourite
               />
             ))}
           </div>

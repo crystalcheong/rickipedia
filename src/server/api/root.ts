@@ -1,4 +1,4 @@
-import { rickAndMortyRouter } from "@/server/api/routers"
+import { favouritesRouter, rickAndMortyRouter } from "@/server/api/routers"
 import { createTRPCRouter } from "@/server/api/trpc"
 
 /**
@@ -8,6 +8,7 @@ import { createTRPCRouter } from "@/server/api/trpc"
  */
 export const appRouter = createTRPCRouter({
   rickAndMorty: rickAndMortyRouter,
+  favourites: favouritesRouter,
 })
 
 // export type definition of API

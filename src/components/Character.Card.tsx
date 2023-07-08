@@ -1,5 +1,7 @@
+import { useAuth, useClerk } from "@clerk/nextjs"
+import { Bookmark, BookmarkPlus } from "lucide-react"
 import { useRouter } from "next/router"
-import { Fragment } from "react"
+import { Fragment, memo, useState } from "react"
 
 import { CharacterChangeFilters } from "@/components/Character.Search"
 import { Badge } from "@/components/ui/Badge"
@@ -13,20 +15,24 @@ import {
 } from "@/components/ui/Card"
 import { NextImage } from "@/components/ui/Image"
 import { Separator } from "@/components/ui/Separator"
-import { CharacterStatus } from "@/data/clients/rickAndMorty"
-import { type RickAndMorty } from "@/types/rickAndMorty.d"
-import { cn } from "@/utils"
+import { type Favourite } from "@/data/db/favourites/schema"
+import { type Character, CharacterStatus } from "@/types/rickAndMorty"
+import { api, cn } from "@/utils"
 
 interface CharacterCardProps extends CardProps {
-  character: RickAndMorty.Character
+  character: Character
+  isFavourite?: boolean
   disableOnClick?: boolean
+  disableFavourite?: boolean
 }
 
 const CharacterCard = ({
   character,
   className,
+  isFavourite = false,
   disableOnClick = false,
-  tilt,
+  disableFavourite = false,
+  tilt = false,
   tiltProps = {
     glareEnable: true,
     perspective: 500,
@@ -36,11 +42,51 @@ const CharacterCard = ({
   ...rest
 }: CharacterCardProps) => {
   const router = useRouter()
+  const clerk = useClerk()
+  const { userId } = useAuth()
 
+  const [favourite, setFavourite] = useState<boolean>(isFavourite)
+
+  //#endregion  //*======== QUERIES ===========
+  const createFavourite = api.favourites.create.useMutation({
+    onSuccess: () => {
+      setFavourite(true)
+    },
+  })
+  const deleteFavourite = api.favourites.delete.useMutation({
+    onSuccess: () => {
+      setFavourite(false)
+    },
+  })
+  //#endregion  //*======== QUERIES ===========
+
+  //#endregion  //*======== HANDLERS ===========
   const handleOnClick = () => {
     if (disableOnClick) return
     void router.push(`/character/${character.id}`)
   }
+
+  const handleToggleFavourite = () => {
+    if (!character) return
+    if (!userId)
+      return clerk.openSignIn({
+        redirectUrl: router.asPath,
+      })
+
+    const params: Pick<Favourite, "schemaId" | "schemaType"> = {
+      schemaType: "character",
+      schemaId: character.id,
+    }
+    if (favourite) {
+      return deleteFavourite.mutate(params)
+    } else {
+      return createFavourite.mutate(params)
+    }
+  }
+  //#endregion  //*======== HANDLERS ===========
+
+  const FavouriteIcon = memo(favourite ? BookmarkPlus : Bookmark)
+
   return (
     <Card
       key={character.id}
@@ -58,20 +104,42 @@ const CharacterCard = ({
       {/* INFO: Tilt props doesn't have onClick */}
       <div
         onClick={handleOnClick}
-        className={cn("absolute inset-0 z-20")}
+        className={cn("absolute inset-0 top-5 z-20")}
       />
 
       <CardContent className={cn("relative p-2")}>
-        <Badge
+        <aside
           className={cn(
-            "absolute left-0 top-0 z-10",
-            "rounded-none rounded-br-md rounded-tl-md",
-            "capitalize leading-[initial]",
-            "rick dark:slime"
+            "absolute inset-x-0 top-0 z-10",
+            "rounded-t-md",
+            "flex flex-row place-content-between place-items-center"
           )}
         >
-          #{character.id}
-        </Badge>
+          <Badge
+            className={cn(
+              "h-full",
+              "rounded-none rounded-br-md rounded-tl-md",
+              "capitalize leading-[initial]",
+              "rick dark:slime"
+            )}
+          >
+            #{character.id}
+          </Badge>
+
+          {!disableFavourite && (
+            <Badge
+              onClick={handleToggleFavourite}
+              className={cn(
+                "z-20 h-full",
+                "rounded-none rounded-bl-md rounded-tr-md",
+                "capitalize leading-[initial]",
+                "rick dark:slime"
+              )}
+            >
+              <FavouriteIcon className="h-[0.9rem] w-4" />
+            </Badge>
+          )}
+        </aside>
 
         <NextImage
           isPriority
@@ -101,7 +169,7 @@ const CharacterCard = ({
           )}
         >
           {Object.keys(CharacterChangeFilters).map((name, idx) => {
-            const key = name as keyof RickAndMorty.Character
+            const key = name as keyof Character
             let attr = (character?.[key] ?? "") as string
             if (attr === CharacterStatus.unknown) attr = "???"
             const showSeperator = idx % 2 !== 0

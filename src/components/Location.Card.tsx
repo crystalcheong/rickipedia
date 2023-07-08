@@ -1,6 +1,10 @@
+import { useAuth, useClerk } from "@clerk/nextjs"
+import { Bookmark, BookmarkPlus } from "lucide-react"
 import { useRouter } from "next/router"
+import { memo, useState } from "react"
 
 import { LocationBaseFilters } from "@/components/Location.Search"
+import { Badge } from "@/components/ui"
 import {
   Card,
   CardDescription,
@@ -9,35 +13,102 @@ import {
   type CardProps,
   CardTitle,
 } from "@/components/ui/Card"
-import { CharacterStatus } from "@/data/clients/rickAndMorty"
-import { type RickAndMorty } from "@/types/rickAndMorty.d"
-import { cn } from "@/utils"
+import { type Favourite } from "@/data/db/favourites/schema"
+import { CharacterStatus, type Location } from "@/types/rickAndMorty"
+import { api, cn } from "@/utils"
 
 interface LocationCardProps extends CardProps {
-  location: RickAndMorty.Location
+  location: Location
+  isFavourite?: boolean
+  disableFavourite?: boolean
 }
-const LocationCard = ({ location, className, ...rest }: LocationCardProps) => {
+const LocationCard = ({
+  location,
+  className,
+  isFavourite = false,
+  disableFavourite = false,
+  ...rest
+}: LocationCardProps) => {
   const router = useRouter()
+  const clerk = useClerk()
+  const { userId } = useAuth()
 
   const dimension =
     !location.dimension || location.dimension === "unknown"
       ? "???"
       : location.dimension
 
+  const [favourite, setFavourite] = useState<boolean>(isFavourite)
+
+  //#endregion  //*======== QUERIES ===========
+  const createFavourite = api.favourites.create.useMutation({
+    onSuccess: () => {
+      setFavourite(true)
+    },
+  })
+  const deleteFavourite = api.favourites.delete.useMutation({
+    onSuccess: () => {
+      setFavourite(false)
+    },
+  })
+  //#endregion  //*======== QUERIES ===========
+
+  //#endregion  //*======== HANDLERS ===========
   const handleOnClick = () => {
     void router.push(`/location/${location.id}`)
   }
 
+  const handleToggleFavourite = () => {
+    if (!location) return
+    if (!userId)
+      return clerk.openSignIn({
+        redirectUrl: router.asPath,
+      })
+
+    const params: Pick<Favourite, "schemaId" | "schemaType"> = {
+      schemaType: "location",
+      schemaId: location.id,
+    }
+    if (favourite) {
+      return deleteFavourite.mutate(params)
+    } else {
+      return createFavourite.mutate(params)
+    }
+  }
+  //#endregion  //*======== HANDLERS ===========
+
+  const FavouriteIcon = memo(favourite ? BookmarkPlus : Bookmark)
+
   return (
     <Card
       className={cn(
+        "relative",
         "cursor-pointer border-[#3898AA] dark:border-[#8CE261] sm:w-64 xl:w-80",
         className
       )}
-      onClick={handleOnClick}
       {...rest}
     >
-      <CardHeader>
+      {/* INFO: Tilt props doesn't have onClick */}
+      <div
+        onClick={handleOnClick}
+        className={cn("absolute inset-0 top-5 z-20")}
+      />
+
+      <CardHeader className="relative">
+        {!disableFavourite && (
+          <Badge
+            onClick={handleToggleFavourite}
+            className={cn(
+              "absolute right-0 top-0 z-20 ",
+              "rounded-none rounded-bl-md rounded-tr-md",
+              "capitalize leading-[initial]",
+              "rick dark:slime"
+            )}
+          >
+            <FavouriteIcon className="h-[0.9rem] w-4" />
+          </Badge>
+        )}
+
         <CardTitle className="block w-full truncate leading-normal">
           {location.name}
         </CardTitle>
@@ -57,7 +128,7 @@ const LocationCard = ({ location, className, ...rest }: LocationCardProps) => {
         )}
       >
         {Object.keys(LocationBaseFilters).map((name) => {
-          const key = name as keyof RickAndMorty.Location
+          const key = name as keyof Location
           let attr = location?.[key]
           if (key === "residents" && Array.isArray(attr))
             attr = attr.length.toString()

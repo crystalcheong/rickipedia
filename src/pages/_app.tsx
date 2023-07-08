@@ -1,3 +1,4 @@
+import { ClerkProvider } from "@clerk/nextjs"
 import { type AppType } from "next/app"
 import { DefaultSeo } from "next-seo"
 import { ThemeProvider } from "next-themes"
@@ -16,7 +17,9 @@ const App: AppType = ({ Component, pageProps }) => {
       enableSystem
     >
       <DefaultSeo {...SEO} />
-      <Component {...pageProps} />
+      <ClerkProvider {...pageProps}>
+        <Component {...pageProps} />
+      </ClerkProvider>
     </ThemeProvider>
   )
 }

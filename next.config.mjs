@@ -5,7 +5,7 @@
 // ref: https://github.com/pnp/pnpjs/issues/1278
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const env = async () => await import("./src/env.mjs")
+// const env = async () => await import("./src/env.mjs")
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -62,7 +62,7 @@ const config = {
 // https://nextjs.org/docs/advanced-features/security-headers
 const ContentSecurityPolicy = `
     default-src 'self' vercel.live;
-    script-src 'self' 'unsafe-eval' 'unsafe-inline' cdn.vercel-insights.com vercel.live;
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' cdn.vercel-insights.com vercel.live workable-mite-85.clerk.accounts.dev;
     style-src 'self' 'unsafe-inline';
     img-src * blob: data:;
     media-src 'none';
