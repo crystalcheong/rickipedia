@@ -3,6 +3,7 @@ import { Bookmark, BookmarkPlus } from "lucide-react"
 import { useRouter } from "next/router"
 import { type ComponentPropsWithoutRef, Fragment, memo, useState } from "react"
 
+import { SignInTheme } from "@/components/Auth.SignIn"
 import { CharacterChangeFilters } from "@/components/Character.Search"
 import { Button } from "@/components/ui"
 import { NextImage } from "@/components/ui/Image"
@@ -34,7 +35,7 @@ const CharacterDetail = ({
       : character.origin.name
 
   const router = useRouter()
-  const clerk = useClerk()
+  const { openSignIn } = useClerk()
   const { userId } = useAuth()
   const [favourite, setFavourite] = useState<boolean>(isFavourite)
 
@@ -54,8 +55,9 @@ const CharacterDetail = ({
   const handleToggleFavourite = () => {
     if (!character) return
     if (!userId)
-      return clerk.openSignIn({
+      return openSignIn({
         redirectUrl: router.asPath,
+        appearance: SignInTheme,
       })
 
     const params: Pick<Favourite, "schemaId" | "schemaType"> = {

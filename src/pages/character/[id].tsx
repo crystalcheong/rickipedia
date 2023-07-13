@@ -3,6 +3,7 @@ import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
 import { useState } from "react"
 
+import { SignInTheme } from "@/components/Auth.SignIn"
 import BaseLayout from "@/components/layouts/Layout.Base"
 import { RenderGuard } from "@/components/providers"
 import { Badge } from "@/components/ui/Badge"
@@ -19,7 +20,7 @@ const LocationCard = dynamic(() => import("../../components/Location.Card"))
 const CharacterIdPage = () => {
   const router = useRouter()
   const { id } = router.query
-  const clerk = useClerk()
+  const { openSignIn } = useClerk()
   const { userId } = useAuth()
 
   const ids: number[] = RickAndMortyClient.parseIds(id)
@@ -90,8 +91,9 @@ const CharacterIdPage = () => {
       enabled: !!userId && !!charactersData.length,
       onSettled: (_, error) => {
         if (error?.data?.code === "UNAUTHORIZED") {
-          return clerk.openSignIn({
+          return openSignIn({
             redirectUrl: router.asPath,
+            appearance: SignInTheme,
           })
         }
       },

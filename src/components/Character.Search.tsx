@@ -21,6 +21,7 @@ import {
   useState,
 } from "react"
 
+import { SignInTheme } from "@/components/Auth.SignIn"
 import { RenderGuard } from "@/components/providers"
 import { Button } from "@/components/ui/Button"
 import {
@@ -79,7 +80,7 @@ type CharacterSearchProps = ComponentPropsWithoutRef<"main">
 
 const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
   const router = useRouter()
-  const clerk = useClerk()
+  const { openSignIn } = useClerk()
   const { userId } = useAuth()
 
   //#endregion  //*======== STATES ===========
@@ -146,8 +147,9 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
     },
     onSettled: (_, error) => {
       if (error?.data?.code === "UNAUTHORIZED") {
-        return clerk.openSignIn({
+        return openSignIn({
           redirectUrl: router.asPath,
+          appearance: SignInTheme,
         })
       }
     },

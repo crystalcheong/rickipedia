@@ -3,6 +3,7 @@ import { Bookmark, BookmarkPlus } from "lucide-react"
 import { useRouter } from "next/router"
 import { memo, useState } from "react"
 
+import { SignInTheme } from "@/components/Auth.SignIn"
 import { LocationBaseFilters } from "@/components/Location.Search"
 import { Badge } from "@/components/ui"
 import {
@@ -30,7 +31,7 @@ const LocationCard = ({
   ...rest
 }: LocationCardProps) => {
   const router = useRouter()
-  const clerk = useClerk()
+  const { openSignIn } = useClerk()
   const { userId } = useAuth()
 
   const dimension =
@@ -61,8 +62,9 @@ const LocationCard = ({
   const handleToggleFavourite = () => {
     if (!location) return
     if (!userId)
-      return clerk.openSignIn({
+      return openSignIn({
         redirectUrl: router.asPath,
+        appearance: SignInTheme,
       })
 
     const params: Pick<Favourite, "schemaId" | "schemaType"> = {

@@ -2,11 +2,13 @@ import { useAuth, useClerk } from "@clerk/nextjs"
 import { useRouter } from "next/router"
 import { useState } from "react"
 
-import AuthSignIn from "@/components/Auth.SignIn"
+import { SignInTheme } from "@/components/Auth.SignIn"
 import CharacterCard from "@/components/Character.Card"
 import BaseLayout from "@/components/layouts/Layout.Base"
 import LocationCard from "@/components/Location.Card"
+import { RenderGuard } from "@/components/providers"
 import { Badge } from "@/components/ui"
+import Unknown from "@/components/Unknown"
 import { type Favourite } from "@/data/db/favourites/schema"
 import { type SchemaType } from "@/types/rickAndMorty"
 import { api, cn } from "@/utils"
@@ -18,8 +20,8 @@ const InitialFavouritesStates: Record<SchemaType, Favourite[]> = {
 }
 
 const FavouritesPage = () => {
-  const clerk = useClerk()
-  const { userId } = useAuth()
+  const { openSignIn } = useClerk()
+  const { userId, isSignedIn } = useAuth()
   const router = useRouter()
 
   const [favourites, setFavourites] = useState<typeof InitialFavouritesStates>(
@@ -44,8 +46,9 @@ const FavouritesPage = () => {
     },
     onSettled: (_, error) => {
       if (error?.data?.code === "UNAUTHORIZED") {
-        return clerk.openSignIn({
+        return openSignIn({
           redirectUrl: router.asPath,
+          appearance: SignInTheme,
         })
       }
     },
@@ -77,55 +80,63 @@ const FavouritesPage = () => {
 
   return (
     <BaseLayout className={cn("flex flex-col gap-16")}>
-      <AuthSignIn />
+      <RenderGuard
+        renderIf={isSignedIn}
+        fallback={
+          <Unknown
+            hideRedirect
+            message={<>No favourites found in any dimensions.</>}
+          />
+        }
+      >
+        <section className="flex flex-col gap-4">
+          <header className="flex flex-row items-center gap-2">
+            <h4>Characters</h4>
+            {!!characterIds.length && (
+              <Badge className="rick dark:slime">{characterIds.length}</Badge>
+            )}
+          </header>
+          <div
+            className={cn(
+              "relative w-full snap-x snap-mandatory snap-always overflow-x-auto",
+              "flex flex-row flex-nowrap place-items-center gap-5"
+            )}
+          >
+            {characters.map((character) => (
+              <CharacterCard
+                key={character.id}
+                character={character}
+                isFavourite={characterIds.includes(character.id)}
+                className="shrink-0 snap-start last:mr-6"
+              />
+            ))}
+          </div>
+        </section>
 
-      <section className="flex flex-col gap-4">
-        <header className="flex flex-row items-center gap-2">
-          <h4>Characters</h4>
-          {!!characterIds.length && (
-            <Badge className="rick dark:slime">{characterIds.length}</Badge>
-          )}
-        </header>
-        <div
-          className={cn(
-            "relative w-full snap-x snap-mandatory snap-always overflow-x-auto",
-            "flex flex-row flex-nowrap place-items-center gap-5"
-          )}
-        >
-          {characters.map((character) => (
-            <CharacterCard
-              key={character.id}
-              character={character}
-              isFavourite={characterIds.includes(character.id)}
-              className="shrink-0 snap-start last:mr-6"
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="flex flex-col gap-4">
-        <header className="flex flex-row items-center gap-2">
-          <h4>Locations</h4>
-          {!!locationIds.length && (
-            <Badge className="rick dark:slime">{locationIds.length}</Badge>
-          )}
-        </header>
-        <div
-          className={cn(
-            "relative w-full snap-x snap-mandatory snap-always overflow-x-auto",
-            "flex flex-row flex-nowrap place-items-center gap-5"
-          )}
-        >
-          {locations.map((location) => (
-            <LocationCard
-              key={location.id}
-              location={location}
-              isFavourite={locationIds.includes(location.id)}
-              className="shrink-0 snap-start last:mr-6"
-            />
-          ))}
-        </div>
-      </section>
+        <section className="flex flex-col gap-4">
+          <header className="flex flex-row items-center gap-2">
+            <h4>Locations</h4>
+            {!!locationIds.length && (
+              <Badge className="rick dark:slime">{locationIds.length}</Badge>
+            )}
+          </header>
+          <div
+            className={cn(
+              "relative w-full snap-x snap-mandatory snap-always overflow-x-auto",
+              "flex flex-row flex-nowrap place-items-center gap-5"
+            )}
+          >
+            {locations.map((location) => (
+              <LocationCard
+                key={location.id}
+                location={location}
+                isFavourite={locationIds.includes(location.id)}
+                className="shrink-0 snap-start last:mr-6"
+              />
+            ))}
+          </div>
+        </section>
+      </RenderGuard>
     </BaseLayout>
   )
 }
