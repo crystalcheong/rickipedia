@@ -4,7 +4,7 @@ import BaseLayout from "@/components/layouts/Layout.Base"
 import Loading from "@/components/Loading"
 import { RenderGuard } from "@/components/providers"
 import RickAndMortyTitle from "@/components/RickAndMortyTitle"
-import { DefaultPaginationInfo } from "@/data/clients/rickAndMorty"
+import { DefaultPaginationInfo } from "@/types/rickAndMorty"
 import { api, cn } from "@/utils"
 
 const CharacterDeck = dynamic(() => import("../components/Character.Deck"))
