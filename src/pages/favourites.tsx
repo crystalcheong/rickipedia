@@ -10,7 +10,7 @@ import { RenderGuard } from "@/components/providers"
 import { Badge } from "@/components/ui"
 import Unknown from "@/components/Unknown"
 import { type Favourite } from "@/data/db/favourites/schema"
-import { type SchemaType } from "@/types/rickAndMorty"
+import { type Character, type Location, type SchemaType } from "@/types/rickAndMorty"
 import { api, cn } from "@/utils"
 
 const InitialFavouritesStates: Record<SchemaType, Favourite[]> = {
@@ -27,6 +27,8 @@ const FavouritesPage = () => {
   const [favourites, setFavourites] = useState<typeof InitialFavouritesStates>(
     InitialFavouritesStates
   )
+  const [characters, setCharacters] = useState<Character[]>([])
+  const [locations, setLocations] = useState<Location[]>([])
   const characterIds = favourites.character.map(({ schemaId }) => schemaId)
   const locationIds = favourites.location.map(({ schemaId }) => schemaId)
 
@@ -54,7 +56,7 @@ const FavouritesPage = () => {
     },
   })
 
-  const [{ data: characters = [] }, { data: locations = [] }] = api.useQueries(
+  api.useQueries(
     (trpc) => [
       trpc.rickAndMorty.getCharacters(
         {
@@ -62,7 +64,10 @@ const FavouritesPage = () => {
         },
         {
           initialData: [],
-          enabled: !!favourites,
+          enabled: !!characterIds.length && !characters.length,
+          onSuccess: (data) => {
+            setCharacters(data)
+          }
         }
       ),
       trpc.rickAndMorty.getLocations(
@@ -71,7 +76,10 @@ const FavouritesPage = () => {
         },
         {
           initialData: [],
-          enabled: !!favourites,
+          enabled: !!locationIds.length && !locations.length,
+          onSuccess: (data) => {
+            setLocations(data)
+          }
         }
       ),
     ]
