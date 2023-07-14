@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/crystalcheong/rickipedia/compare/v0.5.0...v0.6.0) (2023-07-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* **db:** integrated planetscale
+* **account/favourites:** integrated clerk + drizzle
+* trpc panel exposure on prod
+
+### Features
+
+* **account/favourites:** integrated clerk + drizzle ([eaeb815](https://github.com/crystalcheong/rickipedia/commit/eaeb81576ef9f2ef2738f30c2e92ee4e3f2a0144))
+* **account/favourites:** themed modals ([19ffd62](https://github.com/crystalcheong/rickipedia/commit/19ffd6279782d8c81a2aacf0727b10de965f2467))
+* **db:** integrated planetscale ([c44b582](https://github.com/crystalcheong/rickipedia/commit/c44b5823c456203f9f30546b7f80bcdc221afa4c))
+* rolling number ([332f86c](https://github.com/crystalcheong/rickipedia/commit/332f86c08f8e90a40fbec3f7aff19759551a84bc))
+
+
+### Bug Fixes
+
+* cors ([dcf9994](https://github.com/crystalcheong/rickipedia/commit/dcf99941171f1868c68ae1acdb7f0642e5435520))
+* cors ([92300c5](https://github.com/crystalcheong/rickipedia/commit/92300c5ec827a01c87b7afa085205031a057d678))
+* cors again ([9a4b569](https://github.com/crystalcheong/rickipedia/commit/9a4b569e33901aa460b65bfc5c35e5907fe190ba))
+* **db:** ssl requirement ([71c8bb8](https://github.com/crystalcheong/rickipedia/commit/71c8bb8050b16852d416f32a5c7e4acc206f2294))
+* **deps:** update all dependencies ([#6](https://github.com/crystalcheong/rickipedia/issues/6)) ([e960a88](https://github.com/crystalcheong/rickipedia/commit/e960a88f216503366170f4e8669d65545bbd03ee))
+* patched exports ([5cc2b2f](https://github.com/crystalcheong/rickipedia/commit/5cc2b2fa7bece7e081186f52675f5ec7b9f56694))
+* trpc csp violations ([a0f04d1](https://github.com/crystalcheong/rickipedia/commit/a0f04d14f76d470613030dbc7410d0746907c515))
+
+
+### revert
+
+* trpc panel exposure on prod ([7c9a7fe](https://github.com/crystalcheong/rickipedia/commit/7c9a7fe446e5b5e72a174631206e33a79ee6b9d3))
+
 ## [0.5.0](https://github.com/crystalcheong/rickipedia/compare/v0.4.2...v0.5.0) (2023-06-28)
 
 
