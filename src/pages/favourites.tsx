@@ -10,7 +10,11 @@ import { RenderGuard } from "@/components/providers"
 import { Badge } from "@/components/ui"
 import Unknown from "@/components/Unknown"
 import { type Favourite } from "@/data/db/favourites/schema"
-import { type Character, type Location, type SchemaType } from "@/types/rickAndMorty"
+import {
+  type Character,
+  type Location,
+  type SchemaType,
+} from "@/types/rickAndMorty"
 import { api, cn } from "@/utils"
 
 const InitialFavouritesStates: Record<SchemaType, Favourite[]> = {
@@ -56,34 +60,32 @@ const FavouritesPage = () => {
     },
   })
 
-  api.useQueries(
-    (trpc) => [
-      trpc.rickAndMorty.getCharacters(
-        {
-          ids: characterIds,
+  api.useQueries((trpc) => [
+    trpc.rickAndMorty.getCharacters(
+      {
+        ids: characterIds,
+      },
+      {
+        initialData: [],
+        enabled: !!characterIds.length && !characters.length,
+        onSuccess: (data) => {
+          setCharacters(data)
         },
-        {
-          initialData: [],
-          enabled: !!characterIds.length && !characters.length,
-          onSuccess: (data) => {
-            setCharacters(data)
-          }
-        }
-      ),
-      trpc.rickAndMorty.getLocations(
-        {
-          ids: locationIds,
+      }
+    ),
+    trpc.rickAndMorty.getLocations(
+      {
+        ids: locationIds,
+      },
+      {
+        initialData: [],
+        enabled: !!locationIds.length && !locations.length,
+        onSuccess: (data) => {
+          setLocations(data)
         },
-        {
-          initialData: [],
-          enabled: !!locationIds.length && !locations.length,
-          onSuccess: (data) => {
-            setLocations(data)
-          }
-        }
-      ),
-    ]
-  )
+      }
+    ),
+  ])
   //#endregion  //*======== QUERIES ===========
 
   return (

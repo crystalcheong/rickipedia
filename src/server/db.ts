@@ -8,7 +8,14 @@ const config: PoolOptions = {
   user: env.DB_USERNAME,
   password: env.DB_PASSWORD,
   database: env.DB_NAME,
+
+  ...(env.NODE_ENV === "production" && {
+    ssl: {
+      rejectUnauthorized: true,
+    },
+  }),
 }
+
 const connection = mysql.createPool(config)
 
 export const db = drizzle(connection)

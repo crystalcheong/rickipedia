@@ -21,7 +21,7 @@ const CharacterIdPage = () => {
   const router = useRouter()
   const { id } = router.query
   const { openSignIn } = useClerk()
-  const { userId } = useAuth()
+  const { isSignedIn } = useAuth()
 
   const ids: number[] = RickAndMortyClient.parseIds(id)
 
@@ -31,37 +31,38 @@ const CharacterIdPage = () => {
   //#endregion  //*======== STATES ===========
 
   //#endregion  //*======== QUERIES ===========
-  const { data: charactersData = [] } = api.rickAndMorty.getCharacters.useQuery(
-    {
-      ids,
-    },
-    {
-      initialData: [],
-      enabled: !!ids.length,
-      onSuccess: (data: Character[]) => {
-        const getLocationId = (locationUrl: string): number =>
-          parseInt(locationUrl.slice(locationUrl.lastIndexOf("/") + 1))
-        const locationIds: number[] = data.map(({ location }) =>
-          getLocationId(location.url)
-        )
-        setLocationIds(locationIds)
-
-        const episodeIds: number[] = getUniqueSetList(
-          data.reduce(
-            (eIds: number[] = [], { episode }) =>
-              eIds.concat(
-                RickAndMortyClient.getIdsFromUrls({
-                  idUrls: episode,
-                  type: "episode",
-                })
-              ),
-            []
-          )
-        )
-        setEpisodeIds(episodeIds)
+  const { data: charactersData = [], isFetching: isLoadingCharacters } =
+    api.rickAndMorty.getCharacters.useQuery(
+      {
+        ids,
       },
-    }
-  )
+      {
+        initialData: [],
+        enabled: !!ids.length,
+        onSuccess: (data: Character[]) => {
+          const getLocationId = (locationUrl: string): number =>
+            parseInt(locationUrl.slice(locationUrl.lastIndexOf("/") + 1))
+          const locationIds: number[] = data.map(({ location }) =>
+            getLocationId(location.url)
+          )
+          setLocationIds(locationIds)
+
+          const episodeIds: number[] = getUniqueSetList(
+            data.reduce(
+              (eIds: number[] = [], { episode }) =>
+                eIds.concat(
+                  RickAndMortyClient.getIdsFromUrls({
+                    idUrls: episode,
+                    type: "episode",
+                  })
+                ),
+              []
+            )
+          )
+          setEpisodeIds(episodeIds)
+        },
+      }
+    )
 
   const [
     { data: locationsData = [] as Location[] },
@@ -74,7 +75,10 @@ const CharacterIdPage = () => {
       },
       {
         initialData: [],
-        enabled: !!locationIds.length && !!charactersData.length,
+        enabled:
+          !!locationIds.length &&
+          !!charactersData.length &&
+          !isLoadingCharacters,
       }
     ),
     trpc.rickAndMorty.getEpisodes(
@@ -83,12 +87,15 @@ const CharacterIdPage = () => {
       },
       {
         initialData: [],
-        enabled: !!episodeIds.length && !!charactersData.length,
+        enabled:
+          !!episodeIds.length &&
+          !!charactersData.length &&
+          !isLoadingCharacters,
       }
     ),
     trpc.favourites.getAll(undefined, {
       initialData: [],
-      enabled: !!userId && !!charactersData.length,
+      enabled: isSignedIn && !!charactersData.length,
       onSettled: (_, error) => {
         if (error?.data?.code === "UNAUTHORIZED") {
           return openSignIn({
