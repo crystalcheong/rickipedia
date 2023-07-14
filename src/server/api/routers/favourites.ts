@@ -39,7 +39,7 @@ export const favouritesRouter = createTRPCRouter({
     // if no user_id in context, throw an error
     if (!ctx.auth.userId) throw new TRPCError({ code: "UNAUTHORIZED" })
 
-    return await getUserFavourites({ user_id: ctx.auth.userId })
+    return (await getUserFavourites({ user_id: ctx.auth.userId })) ?? []
   }),
   getAllBySchema: protectedProcedure
     .input(Favourite.pick({ schemaType: true }))

@@ -14,6 +14,7 @@ import Logo from "@/components/Logo"
 import { RenderGuard } from "@/components/providers"
 import ThemeSwitch from "@/components/Theme.Switch"
 import { Button, NextImage } from "@/components/ui"
+import { Toaster } from "@/components/ui/toaster"
 import { AppRoutes, ExternalLinks } from "@/data/static"
 import { AppVersion } from "@/data/static/app"
 import { cn } from "@/utils"
@@ -144,6 +145,7 @@ const BaseLayout = ({
           <RenderGuard>{children}</RenderGuard>
         </SlimePortal>
       </main>
+      <Toaster />
       <footer
         className={cn(
           "border-t",
