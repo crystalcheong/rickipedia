@@ -102,8 +102,8 @@ dependencies:
     specifier: ^6.2.1
     version: 6.2.1
   lucide-react:
-    specifier: ^0.259.0
-    version: 0.259.0(react@18.2.0)
+    specifier: ^0.260.0
+    version: 0.260.0(react@18.2.0)
   mysql2:
     specifier: ^3.5.0
     version: 3.5.0
@@ -8164,8 +8164,8 @@ packages:
       es5-ext: 0.10.62
     dev: true
 
-  /lucide-react@0.259.0(react@18.2.0):
-    resolution: {integrity: sha512-dFBLc6jRDfcpD9NQ7NyFVa+YR3RHX6+bs+f/UiotvNPho+kd4WyeXWMCCchUf7i/pq3BAaHkbmtkbx/GxxHVUw==}
+  /lucide-react@0.260.0(react@18.2.0):
+    resolution: {integrity: sha512-xN6wuhUlcXeS4GsxZpd2DZp+m1jEZPckuCr90nQAXKRNl63GZ4KshIcGmqJEUqEygmv8Rf99MhcwF3DqBqQ9Dg==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0
     dependencies:
