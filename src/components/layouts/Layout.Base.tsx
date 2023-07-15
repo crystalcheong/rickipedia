@@ -1,4 +1,5 @@
-import { GitBranch } from "lucide-react"
+import { SignedIn, SignedOut, useClerk, UserButton } from "@clerk/nextjs"
+import { GitBranch, LogIn } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { NextSeo, type NextSeoProps } from "next-seo"
@@ -10,6 +11,7 @@ import {
   useState,
 } from "react"
 
+import { SignInTheme } from "@/components/Auth.SignIn"
 import Logo from "@/components/Logo"
 import { RenderGuard } from "@/components/providers"
 import ThemeSwitch from "@/components/Theme.Switch"
@@ -58,6 +60,26 @@ export const SlimePortal: FC<SlimePortalProps> = ({
   )
 }
 
+export const UserProfileTheme = {
+  elements: {
+    card: "[&>*:last-child]:hidden border border-[#3898AA] dark:border-[#8CE261]",
+  },
+}
+export const UserButtonTheme = {
+  elements: {
+    userButtonBox:
+      "rounded-full border-2 border-[#3898AA] dark:border-[#8CE261]",
+    userButtonTrigger: "!shadow-none",
+    userButtonPopoverCard:
+      "bg-background text-foreground border border-[#3898AA] dark:border-[#8CE261]",
+    userButtonPopoverFooter: "hidden",
+    userButtonPopoverActionButton: "p-4 min-h-0 text-foreground",
+    userButtonPopoverActionButtonText: "text-foreground",
+    userButtonPopoverActionButtonIcon: "text-foreground",
+  },
+  userProfile: UserProfileTheme,
+}
+
 export interface BaseLayoutProps extends ComponentProps<"main"> {
   showPortal?: boolean
   seo?: Partial<NextSeoProps>
@@ -70,7 +92,16 @@ const BaseLayout = ({
   seo,
   ...rest
 }: BaseLayoutProps) => {
-  const router = useRouter()
+  const { asPath } = useRouter()
+  const { openSignIn } = useClerk()
+
+  const handleSignIn = () => {
+    return openSignIn({
+      redirectUrl: asPath,
+      appearance: SignInTheme,
+    })
+  }
+
   return (
     <>
       <NextSeo {...seo} />
@@ -110,8 +141,8 @@ const BaseLayout = ({
               .map(([route, info]) => {
                 const isActiveRoute: boolean =
                   info.href === "/"
-                    ? router.asPath === info.href
-                    : router.asPath.includes(info.href)
+                    ? asPath === info.href
+                    : asPath.includes(info.href)
                 return (
                   <Link
                     key={`footer-route-${route}`}
@@ -130,6 +161,23 @@ const BaseLayout = ({
                 )
               })}
           </div>
+
+          <SignedIn>
+            <UserButton
+              appearance={UserButtonTheme}
+              afterSignOutUrl={asPath}
+            />
+          </SignedIn>
+          <SignedOut>
+            <Button
+              variant="secondary"
+              onClick={handleSignIn}
+              className="hidden md:block"
+            >
+              <span className="sr-only lg:not-sr-only">Sign In</span>
+              <LogIn className="block h-4 w-4 lg:hidden" />
+            </Button>
+          </SignedOut>
         </nav>
       </header>
       <main

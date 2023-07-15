@@ -4,6 +4,8 @@ import {
   Github,
   Globe2,
   Home,
+  LogIn,
+  LogOut,
   Map,
   Search,
   Users,
@@ -33,6 +35,17 @@ export const AppRoutes = {
   Favourites: {
     href: "/favourites",
     icon: BookmarkPlus,
+  },
+}
+
+export const AuthRoutes = {
+  SignIn: {
+    href: "/auth/signIn",
+    icon: LogIn,
+  },
+  SignOut: {
+    href: "/auth/signOut",
+    icon: LogOut,
   },
 }
 

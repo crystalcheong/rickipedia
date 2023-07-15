@@ -127,8 +127,6 @@ const LocationIdPage = () => {
                 key={character.id}
                 character={character}
                 className="shrink-0 snap-center snap-always"
-                tilt
-                disableFavourite
               />
             ))}
           </div>

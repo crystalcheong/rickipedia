@@ -6,7 +6,7 @@ import { cn } from "@/utils"
 
 export const SignInTheme = {
   elements: {
-    rootBox: "bg-transparent w-11/12 mx-auto min-w-[60svw]",
+    rootBox: "bg-transparent mx-auto min-w-[60svw] max-h-screen",
     card: "p-3 m-0 max-w-none w-full [&>*:last-child]:hidden",
     formButtonPrimary:
       "dark:slime rick text-sm text-primary-foreground normal-case",
