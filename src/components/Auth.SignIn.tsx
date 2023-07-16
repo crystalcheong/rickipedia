@@ -1,4 +1,5 @@
 import { SignIn, useAuth } from "@clerk/nextjs"
+import { block } from "million/react"
 import { useRouter } from "next/router"
 
 import { RenderGuard } from "@/components/providers"
@@ -15,7 +16,7 @@ export const SignInTheme = {
   },
 }
 
-const AuthSignIn = () => {
+const AuthSignIn = block(() => {
   const { userId } = useAuth()
   const { asPath } = useRouter()
   return (
@@ -34,6 +35,6 @@ const AuthSignIn = () => {
       </section>
     </RenderGuard>
   )
-}
+})
 
 export default AuthSignIn

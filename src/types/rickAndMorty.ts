@@ -1,86 +1,134 @@
+import { z } from "zod"
+
 //#endregion  //*======== PAGINATION ===========
-export interface PaginationInfo {
-  page: number
-}
-export const DefaultPaginationInfo: PaginationInfo = {
+export const PaginationInfo = z.object({
+  page: z.number().int().positive().min(1).default(1),
+})
+export type PaginationInfo = z.infer<typeof PaginationInfo>
+export const DefaultPaginationInfo = {
   page: 1,
-}
+} satisfies PaginationInfo
+
+export const PaginationTypes = ["all", "search"] as const
+const PaginationType = z.enum(PaginationTypes)
+export type PaginationType = z.infer<typeof PaginationType>
+
+const PaginationStates = z.record(PaginationType, PaginationInfo)
+export type PaginationStates = z.infer<typeof PaginationStates>
+export const InitialPaginationStates = Object.fromEntries(
+  PaginationTypes.map((type) => [type, DefaultPaginationInfo])
+) satisfies PaginationStates
+
 //#endregion  //*======== PAGINATION ===========
 
 //#endregion  //*======== SCHEMAS ===========
-export enum CharacterStatus {
-  alive = "alive",
-  dead = "dead",
-  unknown = "unknown",
-}
-export enum CharacterSpecies {
-  human = "human",
-  alien = "alien",
-  humanoid = "humanoid",
-  poopybutthole = "poopybutthole",
-}
-export enum CharacterGender {
-  male = "male",
-  female = "female",
-  genderless = "genderless",
-  unknown = "unknown",
-}
+export const CharacterStatuses = ["alive", "dead", "unknown"] as const
+const CharacterStatus = z.enum(CharacterStatuses)
+export type CharacterStatus = z.infer<typeof CharacterStatus>
+
+export const CharacterSpecimens = [
+  "human",
+  "alien",
+  "humanoid",
+  "poopybutthole",
+] as const
+const CharacterSpecies = z.enum(CharacterSpecimens)
+export type CharacterSpecies = z.infer<typeof CharacterStatus>
+
+export const CharacterGenders = [
+  "male",
+  "female",
+  "genderless",
+  "unknown",
+] as const
+const CharacterGender = z.enum(CharacterGenders)
+export type CharacterGender = z.infer<typeof CharacterGender>
 
 export const SchemaTypes = ["character", "episode", "location"] as const
-export type SchemaType = (typeof SchemaTypes)[number]
+const SchemaType = z.enum(SchemaTypes)
+export type SchemaType = z.infer<typeof SchemaType>
+const SchemaTypeLimits = z.record(SchemaType, z.number().default(0))
+export type SchemaTypeLimits = z.infer<typeof SchemaTypeLimits>
 
-export interface BaseSchema {
-  id: number
-  name: string
-  type: string
-  url: string
-  created: string
-}
+export const DefaultSchemaTypeLimits = Object.fromEntries(
+  SchemaTypes.map((type) => [type, 0])
+) satisfies SchemaTypeLimits
 
-export interface Character extends BaseSchema {
-  status: CharacterStatus
-  species: CharacterSpecies
-  gender: CharacterGender
-  origin: {
-    name: string
-    url: string
-  }
-  location: {
-    name: string
-    url: string
-  }
-  image: string
-  episode: string[]
-}
+export const BaseSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  type: z.string(),
+  url: z.string(),
+  created: z.string(),
+})
+export type BaseSchema = z.infer<typeof BaseSchema>
 
-export interface Location extends BaseSchema {
-  dimension: string
-  residents: string[]
-}
+export const BaseInfo = z.object({
+  name: z.string(),
+  url: z.string(),
+})
+export type BaseInfo = z.infer<typeof BaseInfo>
 
-export interface Episode extends Omit<BaseSchema, "type"> {
-  air_date: string
-  episode: string
-  characters: string[]
-}
+export const Character = BaseSchema.extend({
+  status: CharacterStatus,
+  species: CharacterSpecies,
+  gender: CharacterGender,
+  origin: BaseInfo,
+  location: BaseInfo,
+  image: z.string(),
+  episode: z.string().array(),
+})
+export type Character = z.infer<typeof Character>
+
+export const Location = BaseSchema.extend({
+  dimension: z.string(),
+  residents: z.string().array(),
+})
+export type Location = z.infer<typeof Location>
+
+export const Episode = BaseSchema.omit({ type: true }).extend({
+  air_date: z.string(),
+  episode: z.string(),
+  characters: z.string().array(),
+})
+export type Episode = z.infer<typeof Episode>
+
+export type ExtendedBaseSchema<T extends BaseSchema | Partial<BaseSchema>> = T &
+  Partial<BaseSchema>
+export type SchemaPaginationStates<
+  T extends Partial<BaseSchema | ExtendedBaseSchema<BaseSchema>>
+> = Record<PaginationType, T[]>
+
+export const getDefaultSchemaPaginationStates = <
+  T extends Partial<BaseSchema | ExtendedBaseSchema<BaseSchema>>
+>(): SchemaPaginationStates<T> =>
+  Object.fromEntries(
+    PaginationTypes.map((type) => [type, [] as T[]])
+  ) as SchemaPaginationStates<T>
+
 //#endregion  //*======== SCHEMAS ===========
 
 //#endregion  //*======== FILTERS ===========
-export interface CharacterFilterInfo {
-  name?: BaseSchema["name"]
-  status?: Character["status"]
-  species?: Character["species"]
-  gender?: Character["gender"]
-}
 
-export interface LocationFilterInfo {
-  name?: BaseSchema["name"]
-  type?: string
-  dimension?: string
-}
+export const CharacterFilterInfo = Character.pick({
+  name: true,
+  status: true,
+  species: true,
+  gender: true,
+}).partial()
+export type CharacterFilterInfo = z.infer<typeof CharacterFilterInfo>
 
-export interface EpisodeFilterInfo {
-  name?: BaseSchema["name"]
-  episode?: string
-}
+export const LocationFilterInfo = Location.pick({
+  name: true,
+  type: true,
+  dimension: true,
+}).partial()
+export type LocationFilterInfo = z.infer<typeof LocationFilterInfo>
+
+export const EpisodeFilterInfo = Episode.pick({
+  name: true,
+  episode: true,
+}).partial()
+export type EpisodeFilterInfo = z.infer<typeof EpisodeFilterInfo>
+
 //#endregion  //*======== FILTERS ===========

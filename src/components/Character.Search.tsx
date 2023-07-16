@@ -8,6 +8,7 @@ import {
   Filter,
   RotateCw,
 } from "lucide-react"
+import { block, For } from "million/react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { useRouter } from "next/router"
@@ -43,11 +44,13 @@ import { type Favourite } from "@/data/db/favourites/schema"
 import {
   type Character,
   type CharacterFilterInfo,
-  CharacterGender,
-  CharacterSpecies,
-  CharacterStatus,
-  DefaultPaginationInfo,
+  CharacterGenders,
+  CharacterSpecimens,
+  CharacterStatuses,
+  getDefaultSchemaPaginationStates,
+  InitialPaginationStates,
   type PaginationInfo,
+  type PaginationType,
 } from "@/types/rickAndMorty"
 import { api, cn, logger } from "@/utils"
 
@@ -55,229 +58,187 @@ const Unknown = dynamic(() => import("./Unknown"))
 const Loading = dynamic(() => import("./Loading"))
 const CharacterCard = dynamic(() => import("./Character.Card"))
 
-export const PaginationTypes: string[] = ["all", "search"]
-export type PaginationType = (typeof PaginationTypes)[number]
-export const InitialPaginationStates: Record<
-  PaginationType,
-  typeof DefaultPaginationInfo
-> = Object.fromEntries(
-  PaginationTypes.map((type) => [type, DefaultPaginationInfo])
-)
-const InitialCharactersStates: Record<PaginationType, Character[]> =
-  Object.fromEntries(PaginationTypes.map((type) => [type, []]))
-
-const InitialSearchState: Partial<CharacterFilterInfo> = {
+const InitialCharactersStates = getDefaultSchemaPaginationStates<Character>()
+const InitialSearchState: CharacterFilterInfo = {
   name: "",
 }
 
-export const CharacterChangeFilters: Record<string, Record<string, string>> = {
-  status: CharacterStatus,
-  species: CharacterSpecies,
-  gender: CharacterGender,
+export const CharacterChangeFilters: Record<string, readonly string[]> = {
+  status: CharacterStatuses,
+  species: CharacterSpecimens,
+  gender: CharacterGenders,
 }
 
 type CharacterSearchProps = ComponentPropsWithoutRef<"main">
+const CharacterSearch = block(
+  ({ className, ...rest }: CharacterSearchProps) => {
+    const router = useRouter()
+    const { openSignIn } = useClerk()
+    const { userId } = useAuth()
 
-const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
-  const router = useRouter()
-  const { openSignIn } = useClerk()
-  const { userId } = useAuth()
-
-  //#endregion  //*======== STATES ===========
-  const [favouriteIds, setFavouriteIds] = useState<Favourite["schemaId"][]>([])
-  const [characters, setCharacters] = useState<typeof InitialCharactersStates>(
-    InitialCharactersStates
-  )
-  const [paginations, setPaginations] = useState<
-    typeof InitialPaginationStates
-  >(InitialPaginationStates)
-  const [searchFilters, setSearchFilters] =
-    useState<typeof InitialSearchState>(InitialSearchState)
-  const [queryStatus, setQueryStatus] = useState({
-    isFetching: false,
-    isSearching: false,
-    isEnd: false,
-  })
-
-  const currentPaginationType = queryStatus.isSearching ? "search" : "all"
-  const isFirstQuery =
-    !(characters[currentPaginationType] ?? []).length ||
-    (paginations[currentPaginationType]?.page ?? 0) < 2
-  const hasFilters: boolean = Object.values(searchFilters ?? {}).some(
-    (filter) => Boolean(filter)
-  )
-  //#endregion  //*======== STATES ===========
-
-  //#endregion  //*======== QUERIES ===========
-  const { isLoading: isLoadingCharacters } =
-    api.rickAndMorty.getAllCharacters.useQuery(
-      {
-        pagination: paginations[currentPaginationType],
-        filters: queryStatus.isSearching ? searchFilters : undefined,
-      },
-      {
-        enabled:
-          (!(characters["all"] ?? []).length || queryStatus.isFetching) &&
-          !queryStatus.isEnd,
-        onSuccess: (newCharacters: Character[]) => {
-          setCharacters((state) => ({
-            ...state,
-            [currentPaginationType]: isFirstQuery
-              ? newCharacters
-              : (state[currentPaginationType] ?? []).concat(newCharacters),
-          }))
-          setQueryStatus((status) => ({
-            ...status,
-            isEnd: newCharacters.length < 20,
-            isFetching: false,
-          }))
-        },
-      }
+    //#endregion  //*======== STATES ===========
+    const [favouriteIds, setFavouriteIds] = useState<Favourite["schemaId"][]>(
+      []
     )
-
-  api.favourites.getAll.useQuery(undefined, {
-    initialData: [],
-    enabled: !!userId,
-    onSuccess: (data) => {
-      setFavouriteIds(
-        data
-          .filter(({ schemaType }) => schemaType === "character")
-          .map(({ schemaId }) => schemaId)
-      )
-    },
-    onSettled: (_, error) => {
-      if (error?.data?.code === "UNAUTHORIZED") {
-        return openSignIn({
-          redirectUrl: router.asPath,
-          appearance: SignInTheme,
-        })
-      }
-    },
-  })
-  //#endregion  //*======== QUERIES ===========
-
-  //#endregion  //*======== UTILS ===========
-  const resetPagination = ({ type }: { type: PaginationType }) => {
-    const isInPaginations: boolean = Object.keys(paginations).includes(type)
-    const isInCharacters: boolean = Object.keys(characters).includes(type)
-    const isValidType: boolean = isInCharacters && isInPaginations
-    if (!isValidType) return
-
-    // Reset
-    setPaginations({
-      ...paginations,
-      [type]: InitialPaginationStates[type] as PaginationInfo,
-    })
-    setCharacters({
-      ...characters,
-      [type]: InitialCharactersStates[type] as Character[],
-    })
-  }
-
-  const resetFilters = () => {
-    const paginationType: keyof typeof paginations = "search"
-    resetPagination({ type: paginationType })
-
-    setSearchFilters(InitialSearchState)
-
-    setQueryStatus({
-      isEnd: false,
-      isSearching: false,
+    const [characters, setCharacters] = useState<
+      typeof InitialCharactersStates
+    >(InitialCharactersStates)
+    const [paginations, setPaginations] = useState<
+      typeof InitialPaginationStates
+    >(InitialPaginationStates)
+    const [searchFilters, setSearchFilters] =
+      useState<typeof InitialSearchState>(InitialSearchState)
+    const [queryStatus, setQueryStatus] = useState({
       isFetching: false,
-    })
-  }
-
-  const onSearchChange = ({
-    key,
-    value,
-  }: {
-    key: keyof typeof searchFilters
-    value?: string
-  }) => {
-    // Check if key is search change filter (fetches on change)
-    const searchChangeFilters = Object.keys(CharacterChangeFilters)
-    const isSearchChangeFilter: boolean = searchChangeFilters.includes(key)
-
-    // Check if value is blank / empty
-    const isEmpty: boolean = !value || !hasFilters
-    const isSearching = !isEmpty
-    const paginationType: keyof typeof paginations = "search"
-    if (isSearchChangeFilter && !value) value = undefined
-    if (!isSearching) resetPagination({ type: paginationType })
-
-    setSearchFilters((filters) => ({
-      ...filters,
-      [key]: value,
-    }))
-    setQueryStatus({
+      isSearching: false,
       isEnd: false,
-      isSearching: isSearchChangeFilter ?? isSearching,
-      isFetching: isSearchChangeFilter,
-    })
-  }
-
-  //#endregion  //*======== UTILS ===========
-
-  //#region  //*=========== HANDLERS ===========
-  const handleOnSearchFormChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const target: EventTarget & (HTMLInputElement | HTMLSelectElement) =
-      e.target
-    const key = target.name as keyof typeof searchFilters
-    const value: string | undefined = target.value.trim()
-
-    onSearchChange({ key, value })
-  }
-
-  const handleOnLoad = useCallback(() => {
-    if (isLoadingCharacters) return
-
-    const paginationType: keyof typeof paginations = currentPaginationType
-
-    logger({ breakpoint: "[index.tsx:129]" }, "CharacterSearch/handleOnLoad", {
-      isFirstQuery,
-      paginationType,
     })
 
-    const nextPage = (paginations[paginationType]?.page ?? 1) + 1
-    setPaginations({
-      ...paginations,
-      [paginationType]: {
-        page: nextPage,
+    const currentPaginationType = queryStatus.isSearching ? "search" : "all"
+    const isFirstQuery =
+      !(characters[currentPaginationType] ?? []).length ||
+      (paginations[currentPaginationType]?.page ?? 0) < 2
+    const hasFilters: boolean = Object.values(searchFilters ?? {}).some(
+      (filter) => Boolean(filter)
+    )
+    //#endregion  //*======== STATES ===========
+
+    //#endregion  //*======== QUERIES ===========
+    const { isLoading: isLoadingCharacters } =
+      api.rickAndMorty.getAllCharacters.useQuery(
+        {
+          pagination: paginations[currentPaginationType],
+          filters: queryStatus.isSearching ? searchFilters : undefined,
+        },
+        {
+          enabled:
+            (!(characters["all"] ?? []).length || queryStatus.isFetching) &&
+            !queryStatus.isEnd,
+          onSuccess: (newCharacters: Character[]) => {
+            setCharacters((state) => ({
+              ...state,
+              [currentPaginationType]: isFirstQuery
+                ? newCharacters
+                : (state[currentPaginationType] ?? []).concat(newCharacters),
+            }))
+            setQueryStatus((status) => ({
+              ...status,
+              isEnd: newCharacters.length < 20,
+              isFetching: false,
+            }))
+          },
+        }
+      )
+
+    api.favourites.getAll.useQuery(undefined, {
+      initialData: [],
+      enabled: !!userId,
+      onSuccess: (data) => {
+        setFavouriteIds(
+          data
+            .filter(({ schemaType }) => schemaType === "character")
+            .map(({ schemaId }) => schemaId)
+        )
+      },
+      onSettled: (_, error) => {
+        if (error?.data?.code === "UNAUTHORIZED") {
+          return openSignIn({
+            redirectUrl: router.asPath,
+            appearance: SignInTheme,
+          })
+        }
       },
     })
+    //#endregion  //*======== QUERIES ===========
 
-    // Trigger query
-    setQueryStatus({
-      ...queryStatus,
-      isFetching: true,
-    })
-  }, [
-    currentPaginationType,
-    isFirstQuery,
-    isLoadingCharacters,
-    paginations,
-    queryStatus,
-  ])
+    //#endregion  //*======== UTILS ===========
+    const resetPagination = ({ type }: { type: PaginationType }) => {
+      const isInPaginations: boolean = Object.keys(paginations).includes(type)
+      const isInCharacters: boolean = Object.keys(characters).includes(type)
+      const isValidType: boolean = isInCharacters && isInPaginations
+      if (!isValidType) return
 
-  const handleOnSearch = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+      // Reset
+      setPaginations({
+        ...paginations,
+        [type]: InitialPaginationStates[type] as PaginationInfo,
+      })
+      setCharacters({
+        ...characters,
+        [type]: InitialCharactersStates[type],
+      })
+    }
 
-    const paginationType: keyof typeof paginations = "search"
+    const resetFilters = () => {
+      const paginationType = "search" satisfies PaginationType
+      resetPagination({ type: paginationType })
 
-    logger({ breakpoint: "[index.tsx:65]" }, "CharacterSearch/handleOnSearch", {
-      searchFilters,
-      hasFilters,
-      paginationType,
-      isFirstQuery,
-    })
+      setSearchFilters(InitialSearchState)
 
-    // Submitted w/o search filters
-    if (!hasFilters) resetPagination({ type: paginationType })
+      setQueryStatus({
+        isEnd: false,
+        isSearching: false,
+        isFetching: false,
+      })
+    }
 
-    // Only increment pagination if not first query
-    if (!isFirstQuery) {
+    const onSearchChange = ({
+      key,
+      value,
+    }: {
+      key: keyof typeof searchFilters
+      value?: string
+    }) => {
+      // Check if key is search change filter (fetches on change)
+      const searchChangeFilters = Object.keys(CharacterChangeFilters)
+      const isSearchChangeFilter: boolean = searchChangeFilters.includes(key)
+
+      // Check if value is blank / empty
+      const isEmpty: boolean = !value || !hasFilters
+      const isSearching = !isEmpty
+      const paginationType = "search" satisfies PaginationType
+      if (isSearchChangeFilter && !value) value = undefined
+      if (!isSearching) resetPagination({ type: paginationType })
+
+      setSearchFilters((filters) => ({
+        ...filters,
+        [key]: value,
+      }))
+      setQueryStatus({
+        isEnd: false,
+        isSearching: isSearchChangeFilter ?? isSearching,
+        isFetching: isSearchChangeFilter,
+      })
+    }
+
+    //#endregion  //*======== UTILS ===========
+
+    //#region  //*=========== HANDLERS ===========
+    const handleOnSearchFormChange = (
+      e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+      const target: EventTarget & (HTMLInputElement | HTMLSelectElement) =
+        e.target
+      const key = target.name as keyof typeof searchFilters
+      const value: string | undefined = target.value.trim()
+
+      onSearchChange({ key, value })
+    }
+
+    const handleOnLoad = useCallback(() => {
+      if (isLoadingCharacters) return
+
+      const paginationType: keyof typeof paginations = currentPaginationType
+
+      logger(
+        { breakpoint: "[index.tsx:129]" },
+        "CharacterSearch/handleOnLoad",
+        {
+          isFirstQuery,
+          paginationType,
+        }
+      )
+
       const nextPage = (paginations[paginationType]?.page ?? 1) + 1
       setPaginations({
         ...paginations,
@@ -285,222 +246,267 @@ const CharacterSearch = ({ className, ...rest }: CharacterSearchProps) => {
           page: nextPage,
         },
       })
-    }
 
-    // Trigger query
-    setQueryStatus({
-      ...queryStatus,
-      isFetching: hasFilters,
-      isSearching: hasFilters,
-    })
-  }
-  //#endregion  //*======== HANDLERS ===========
+      // Trigger query
+      setQueryStatus({
+        ...queryStatus,
+        isFetching: true,
+      })
+    }, [
+      currentPaginationType,
+      isFirstQuery,
+      isLoadingCharacters,
+      paginations,
+      queryStatus,
+    ])
 
-  const [showFilters, setShowFilters] = useState<boolean>(false)
+    const handleOnSearch = (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
 
-  const paginatedEndRef = useRef<HTMLDivElement>(null)
-  const handleObserver = useCallback(
-    ([entry]: IntersectionObserverEntry[]) => {
-      if (!!entry && entry.isIntersecting && !queryStatus.isFetching) {
-        handleOnLoad()
+      const paginationType = "search" satisfies PaginationType
+
+      logger(
+        { breakpoint: "[index.tsx:65]" },
+        "CharacterSearch/handleOnSearch",
+        {
+          searchFilters,
+          hasFilters,
+          paginationType,
+          isFirstQuery,
+        }
+      )
+
+      // Submitted w/o search filters
+      if (!hasFilters) resetPagination({ type: paginationType })
+
+      // Only increment pagination if not first query
+      if (!isFirstQuery) {
+        const nextPage = (paginations[paginationType]?.page ?? 1) + 1
+        setPaginations({
+          ...paginations,
+          [paginationType]: {
+            page: nextPage,
+          },
+        })
       }
-    },
-    [handleOnLoad, queryStatus.isFetching]
-  )
 
-  useEffect(() => {
-    if (!characters[currentPaginationType]?.length || isLoadingCharacters)
-      return
-    const observer = new IntersectionObserver(handleObserver, {
-      threshold: 1,
-    })
-
-    if (paginatedEndRef.current) observer.observe(paginatedEndRef.current)
-
-    return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      if (paginatedEndRef.current) observer.unobserve(paginatedEndRef.current)
+      // Trigger query
+      setQueryStatus({
+        ...queryStatus,
+        isFetching: hasFilters,
+        isSearching: hasFilters,
+      })
     }
-  }, [characters, currentPaginationType, handleObserver, isLoadingCharacters])
+    //#endregion  //*======== HANDLERS ===========
 
-  return (
-    <main
-      className={cn("flex flex-col gap-12", className)}
-      {...rest}
-    >
-      <Link
-        href="#searchForm"
-        scroll={false}
-        className={cn(
-          "rick dark:slime",
-          "fixed bottom-[10%] right-[10%] z-10",
-          "p !h-auto !w-fit !p-0 text-accent",
-          "rounded-full",
-          "animate-bounce",
-          (characters[currentPaginationType] ?? []).length <= 20 && "hidden"
-        )}
+    const [showFilters, setShowFilters] = useState<boolean>(false)
+
+    const paginatedEndRef = useRef<HTMLDivElement>(null)
+    const handleObserver = useCallback(
+      ([entry]: IntersectionObserverEntry[]) => {
+        if (!!entry && entry.isIntersecting && !queryStatus.isFetching) {
+          handleOnLoad()
+        }
+      },
+      [handleOnLoad, queryStatus.isFetching]
+    )
+
+    useEffect(() => {
+      if (!characters[currentPaginationType]?.length || isLoadingCharacters)
+        return
+      const observer = new IntersectionObserver(handleObserver, {
+        threshold: 1,
+      })
+
+      if (paginatedEndRef.current) observer.observe(paginatedEndRef.current)
+
+      return () => {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        if (paginatedEndRef.current) observer.unobserve(paginatedEndRef.current)
+      }
+    }, [characters, currentPaginationType, handleObserver, isLoadingCharacters])
+
+    return (
+      <main
+        className={cn("flex flex-col gap-12", className)}
+        {...rest}
       >
-        <ArrowUpCircle className="h-8 w-8 hover:scale-110" />
-      </Link>
-
-      <form
-        id="searchForm"
-        method="get"
-        onSubmit={handleOnSearch}
-        className={cn(
-          "bg-background",
-          "flex flex-col place-content-center place-items-center gap-4",
-          "mx-auto w-full sm:w-3/5 [&>*]:w-full"
-        )}
-      >
-        <section className="flex flex-row place-content-between place-items-center gap-4">
-          <Input
-            name="name"
-            type="search"
-            placeholder="Search by name"
-            value={searchFilters.name ?? ""}
-            onChange={handleOnSearchFormChange}
-          />
-          <Toggle
-            aria-label="Toggle Filter"
-            variant="outline"
-            pressed={showFilters}
-            onPressedChange={setShowFilters}
-            className={cn(showFilters && "border-[#8CE261]")}
-          >
-            <Filter className="h-4 w-4" />
-          </Toggle>
-        </section>
-
-        <section
+        <Link
+          href="#searchForm"
+          scroll={false}
           className={cn(
-            "hidden flex-row flex-wrap place-content-center place-items-center gap-4",
-            "border-b pb-8",
-            showFilters && "flex"
+            "rick dark:slime",
+            "fixed bottom-[10%] right-[10%] z-10",
+            "p !h-auto !w-fit !p-0 text-accent",
+            "rounded-full",
+            "animate-bounce",
+            (characters[currentPaginationType] ?? []).length <= 20 && "hidden"
           )}
         >
-          {Object.entries(CharacterChangeFilters).map(([name, filterMap]) => {
-            const filterKey = name as keyof typeof searchFilters
-            const value = searchFilters?.[filterKey] as string
+          <ArrowUpCircle className="h-8 w-8 hover:scale-110" />
+        </Link>
 
-            if (!filterMap) return null
-            return (
-              <Popover key={`filter-${name}`}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    className={cn(
-                      "w-[200px] flex-1 justify-between capitalize",
-                      value
-                        ? "rick dark:slime bg-clip-text text-transparent"
-                        : "text-muted-foreground"
-                    )}
-                  >
-                    {value ?? `${name}`}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="max-h-60 w-full p-0">
-                  <RenderGuard renderIf={!!filterMap}>
-                    <Command>
-                      <CommandInput placeholder={`Search by ${name}...`} />
-                      <CommandEmpty>No {name} found.</CommandEmpty>
-                      <CommandGroup className="max-h-60 overflow-y-scroll">
-                        {Object.values(filterMap).map((filter) => (
-                          <CommandItem
-                            key={`filter-enum-${filter}`}
-                            className="capitalize"
-                            onSelect={(currentValue) => {
-                              onSearchChange({
-                                key: name as keyof typeof searchFilters,
-                                value:
-                                  currentValue === value
-                                    ? undefined
-                                    : currentValue,
-                              })
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                (value?.toString() ?? "").toUpperCase() ===
-                                  filter.toUpperCase()
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {filter}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </Command>
-                  </RenderGuard>
-                </PopoverContent>
-              </Popover>
+        <form
+          id="searchForm"
+          method="get"
+          onSubmit={handleOnSearch}
+          className={cn(
+            "bg-background",
+            "flex flex-col place-content-center place-items-center gap-4",
+            "mx-auto w-full sm:w-3/5 [&>*]:w-full"
+          )}
+        >
+          <section className="flex flex-row place-content-between place-items-center gap-4">
+            <Input
+              name="name"
+              type="search"
+              placeholder="Search by name"
+              value={searchFilters.name ?? ""}
+              onChange={handleOnSearchFormChange}
+            />
+            <Toggle
+              aria-label="Toggle Filter"
+              variant="outline"
+              pressed={showFilters}
+              onPressedChange={setShowFilters}
+              className={cn(showFilters && "border-[#8CE261]")}
+            >
+              <Filter className="h-4 w-4" />
+            </Toggle>
+          </section>
+
+          <section
+            className={cn(
+              "hidden flex-row flex-wrap place-content-center place-items-center gap-4",
+              "border-b pb-8",
+              showFilters && "flex"
+            )}
+          >
+            {Object.entries(CharacterChangeFilters).map(([name, filterMap]) => {
+              const filterKey = name as keyof typeof searchFilters
+              const value = searchFilters?.[filterKey] as string
+
+              if (!filterMap.length) return null
+              return (
+                <Popover key={`filter-${name}`}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className={cn(
+                        "w-[200px] flex-1 justify-between capitalize",
+                        value
+                          ? "rick dark:slime bg-clip-text text-transparent"
+                          : "text-muted-foreground"
+                      )}
+                    >
+                      {value ?? `${name}`}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="max-h-60 w-full p-0">
+                    <RenderGuard renderIf={!!filterMap}>
+                      <Command>
+                        <CommandInput placeholder={`Search by ${name}...`} />
+                        <CommandEmpty>No {name} found.</CommandEmpty>
+                        <CommandGroup className="max-h-60 overflow-y-scroll">
+                          {filterMap.map((filter) => (
+                            <CommandItem
+                              key={`filter-enum-${filter}`}
+                              className="capitalize"
+                              onSelect={(currentValue) => {
+                                onSearchChange({
+                                  key: name as keyof typeof searchFilters,
+                                  value:
+                                    currentValue === value
+                                      ? undefined
+                                      : currentValue,
+                                })
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  (value?.toString() ?? "").toUpperCase() ===
+                                    filter.toUpperCase()
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {filter}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </Command>
+                    </RenderGuard>
+                  </PopoverContent>
+                </Popover>
+              )
+            })}
+            <Toggle
+              aria-label="Reset Filters"
+              variant="outline"
+              onClick={resetFilters}
+              disabled={!hasFilters}
+            >
+              <RotateCw className="h-4 w-4" />
+            </Toggle>
+          </section>
+
+          <p className="max-w-prose px-3 text-sm">
+            Found: &nbsp;
+            <RollingNumbers
+              className="rick dark:slime bg-clip-text font-semibold text-transparent"
+              value={(characters[currentPaginationType] ?? []).length}
+            />
+          </p>
+        </form>
+
+        <RenderGuard
+          renderIf={!!(characters[currentPaginationType] ?? []).length}
+          fallback={
+            isLoadingCharacters || queryStatus.isFetching ? (
+              <Loading />
+            ) : (
+              <Unknown
+                hideRedirect
+                message={
+                  <>
+                    The character you are trying to search has been <br /> is
+                    not in any dimension.
+                  </>
+                }
+              />
             )
-          })}
-          <Toggle
-            aria-label="Reset Filters"
-            variant="outline"
-            onClick={resetFilters}
-            disabled={!hasFilters}
-          >
-            <RotateCw className="h-4 w-4" />
-          </Toggle>
-        </section>
-
-        <p className="max-w-prose px-3 text-sm">
-          Found: &nbsp;
-          <RollingNumbers
-            className="rick dark:slime bg-clip-text font-semibold text-transparent"
-            value={(characters[currentPaginationType] ?? []).length}
-          />
-        </p>
-      </form>
-
-      <RenderGuard
-        renderIf={
-          !(isLoadingCharacters || queryStatus.isFetching) ||
-          !!(characters[currentPaginationType] ?? []).length
-        }
-        fallback={
-          isLoadingCharacters || queryStatus.isFetching ? (
-            <Loading />
-          ) : (
-            <Unknown
-              hideRedirect
-              message={
-                <>
-                  The character you are trying to search has been <br /> is not
-                  in any dimension.
-                </>
-              }
-            />
-          )
-        }
-      >
-        <section
-          className={cn(
-            "mx-auto w-fit",
-            "grid grid-flow-row-dense",
-            "auto-cols-fr gap-5",
-            "sm:grid-cols-2 lg:grid-cols-3"
-          )}
+          }
         >
-          {(characters[currentPaginationType] ?? []).map((character) => (
-            <CharacterCard
-              key={character.id}
-              character={character}
-              isFavourite={favouriteIds.includes(character.id)}
-              tilt
-            />
-          ))}
-        </section>
-        <div ref={paginatedEndRef} />
-      </RenderGuard>
-    </main>
-  )
-}
+          <section
+            className={cn(
+              "mx-auto w-fit",
+              "grid grid-flow-row-dense",
+              "auto-cols-fr gap-5",
+              "sm:grid-cols-2 lg:grid-cols-3"
+            )}
+          >
+            <For
+              memo
+              each={characters[currentPaginationType] ?? []}
+            >
+              {(character) => (
+                <CharacterCard
+                  key={character.id}
+                  character={character}
+                  isFavourite={(favouriteIds ?? []).includes(character.id)}
+                  tilt
+                />
+              )}
+            </For>
+          </section>
+          <div ref={paginatedEndRef} />
+        </RenderGuard>
+      </main>
+    )
+  }
+)
 
 export default CharacterSearch

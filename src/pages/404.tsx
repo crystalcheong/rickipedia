@@ -13,7 +13,10 @@ const Error404Page = () => {
         "relative overflow-hidden"
       )}
     >
-      <Unknown statusCode={404} />
+      <Unknown
+        statusCode={404}
+        message="Excuse me, coming through. What are you here for? Just kidding, I don’t care."
+      />
     </BaseLayout>
   )
 }

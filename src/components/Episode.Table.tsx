@@ -1,5 +1,6 @@
 import { type ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
+import { block } from "million/react"
 
 import { Button } from "@/components/ui/Button"
 import { type BaseDataTableProps, DataTable } from "@/components/ui/Table.Data"
@@ -40,12 +41,12 @@ const episodeColumns: ColumnDef<Episode>[] = [
   },
 ]
 
-interface EpisodeTable extends BaseDataTableProps {
+type EpisodeTable = BaseDataTableProps & {
   episodes: Episode[]
   columns?: typeof episodeColumns
 }
 
-const EpisodeTable = ({ episodes, columns, ...rest }: EpisodeTable) => {
+const EpisodeTable = block(({ episodes, columns, ...rest }: EpisodeTable) => {
   return (
     <DataTable
       filter="name"
@@ -54,6 +55,6 @@ const EpisodeTable = ({ episodes, columns, ...rest }: EpisodeTable) => {
       {...rest}
     />
   )
-}
+})
 
 export default EpisodeTable

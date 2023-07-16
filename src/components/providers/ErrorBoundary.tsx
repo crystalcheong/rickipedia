@@ -27,7 +27,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
-      return <Unknown />
+      return <Unknown message="Some error occurred, wubba lubba dub-dub!" />
     }
 
     return this.props.children

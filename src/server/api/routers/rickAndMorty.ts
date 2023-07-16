@@ -3,9 +3,10 @@ import { z } from "zod"
 import { RickAndMortyClient } from "@/data/clients/rickAndMorty"
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc"
 import {
-  CharacterGender,
-  CharacterSpecies,
-  CharacterStatus,
+  CharacterFilterInfo,
+  EpisodeFilterInfo,
+  LocationFilterInfo,
+  PaginationInfo,
 } from "@/types/rickAndMorty"
 
 const client: RickAndMortyClient = RickAndMortyClient.getInstance()
@@ -16,20 +17,8 @@ export const rickAndMortyRouter = createTRPCRouter({
   getAllCharacters: publicProcedure
     .input(
       z.object({
-        pagination: z
-          .object({
-            page: z.number().default(1),
-          })
-          .optional(),
-        filters: z
-          .object({
-            name: z.string().trim().optional(),
-            type: z.string().trim().optional(),
-            status: z.nativeEnum(CharacterStatus).optional(),
-            species: z.nativeEnum(CharacterSpecies).optional(),
-            gender: z.nativeEnum(CharacterGender).optional(),
-          })
-          .optional(),
+        pagination: PaginationInfo.optional(),
+        filters: CharacterFilterInfo.optional(),
       })
     )
     .query(({ input }) =>
@@ -47,18 +36,8 @@ export const rickAndMortyRouter = createTRPCRouter({
   getAllLocations: publicProcedure
     .input(
       z.object({
-        pagination: z
-          .object({
-            page: z.number().default(1),
-          })
-          .optional(),
-        filters: z
-          .object({
-            name: z.string().trim().optional(),
-            type: z.string().trim().optional(),
-            dimension: z.string().trim().optional(),
-          })
-          .optional(),
+        pagination: PaginationInfo.optional(),
+        filters: LocationFilterInfo.optional(),
       })
     )
     .query(({ input }) =>
@@ -76,17 +55,8 @@ export const rickAndMortyRouter = createTRPCRouter({
   getAllEpisodes: publicProcedure
     .input(
       z.object({
-        pagination: z
-          .object({
-            page: z.number().default(1),
-          })
-          .optional(),
-        filters: z
-          .object({
-            name: z.string().trim().optional(),
-            episode: z.string().trim().optional(),
-          })
-          .optional(),
+        pagination: PaginationInfo.optional(),
+        filters: EpisodeFilterInfo.optional(),
       })
     )
     .query(({ input }) =>

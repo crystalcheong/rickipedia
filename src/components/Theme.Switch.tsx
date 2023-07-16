@@ -1,4 +1,5 @@
 import { Laptop, Moon, SunMedium } from "lucide-react"
+import { block } from "million/react"
 import { useTheme } from "next-themes"
 import { Fragment } from "react"
 
@@ -24,8 +25,8 @@ const ThemeModes = {
   },
 }
 
-interface ThemeSwitchProps extends MenubarRoot {}
-const ThemeSwitch = ({ className, ...rest }: ThemeSwitchProps) => {
+type ThemeSwitchProps = MenubarRoot
+const ThemeSwitch = block(({ className, ...rest }: ThemeSwitchProps) => {
   const { theme, setTheme } = useTheme()
   return (
     <RenderGuard renderIf={!!theme}>
@@ -60,6 +61,6 @@ const ThemeSwitch = ({ className, ...rest }: ThemeSwitchProps) => {
       </Menubar>
     </RenderGuard>
   )
-}
+})
 
 export default ThemeSwitch

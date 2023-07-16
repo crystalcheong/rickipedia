@@ -2,13 +2,14 @@ import {
   type Character,
   type CharacterFilterInfo,
   DefaultPaginationInfo,
+  DefaultSchemaTypeLimits,
   type Episode,
   type EpisodeFilterInfo,
   type Location,
   type LocationFilterInfo,
   type PaginationInfo,
   type SchemaType,
-  SchemaTypes,
+  type SchemaTypeLimits,
 } from "@/types/rickAndMorty"
 import { getUniqueObjectListwithKeys, HTTP, logger, LogLevel } from "@/utils"
 
@@ -28,13 +29,11 @@ const Routes: Record<string, string> = {
 export class RickAndMortyClient {
   private http: HTTP<typeof Routes>
   private static instance: RickAndMortyClient
-  private schemaLimits: Record<SchemaType, number>
+  private schemaLimits: SchemaTypeLimits
 
   private constructor() {
     this.http = new HTTP(Endpoint, Routes)
-    this.schemaLimits = Object.fromEntries(
-      SchemaTypes.map((type) => [type, 0])
-    ) as Record<SchemaType, number>
+    this.schemaLimits = DefaultSchemaTypeLimits
   }
 
   static getInstance = (): RickAndMortyClient => {
@@ -72,7 +71,7 @@ export class RickAndMortyClient {
     return this.parseIds(ids)
   }
 
-  getSchemaLimits = async () => {
+  getSchemaLimits = async (): Promise<SchemaTypeLimits> => {
     const emptyKeys: SchemaType[] = Object.entries(this.schemaLimits)
       .filter(([, limit]) => limit < 1)
       .map(([type]) => type as SchemaType)
@@ -99,7 +98,7 @@ export class RickAndMortyClient {
 
   getAllCharacters = async (
     pagination: PaginationInfo = DefaultPaginationInfo,
-    filters?: Partial<CharacterFilterInfo>
+    filters?: CharacterFilterInfo
   ): Promise<Character[]> => {
     const hasFilters: boolean = Object.values(filters ?? {}).some((filter) =>
       Boolean(filter)
@@ -192,7 +191,7 @@ export class RickAndMortyClient {
 
   getAllLocations = async (
     pagination: PaginationInfo = DefaultPaginationInfo,
-    filters?: Partial<LocationFilterInfo>
+    filters?: LocationFilterInfo
   ): Promise<Location[]> => {
     const hasFilters: boolean = Object.values(filters ?? {}).some((filter) =>
       Boolean(filter)
@@ -284,7 +283,7 @@ export class RickAndMortyClient {
 
   getAllEpisodes = async (
     pagination: PaginationInfo = DefaultPaginationInfo,
-    filters?: Partial<EpisodeFilterInfo>
+    filters?: EpisodeFilterInfo
   ): Promise<Episode[]> => {
     const hasFilters: boolean = Object.values(filters ?? {}).some((filter) =>
       Boolean(filter)

@@ -4,8 +4,8 @@
  */
 // ref: https://github.com/pnp/pnpjs/issues/1278
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-// const env = async () => await import("./src/env.mjs")
+import("./src/env.mjs")
+import million from "million/compiler"
 
 /** @type {import("next").NextConfig} */
 const config = {
@@ -108,4 +108,5 @@ const securityHeaders = [
   },
 ]
 
-export default config
+// export default config
+export default million.next(config)

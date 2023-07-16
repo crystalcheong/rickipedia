@@ -3,11 +3,13 @@ import dynamic from "next/dynamic"
 import { type ReactNode, useState } from "react"
 
 import BaseLayout from "@/components/layouts/Layout.Base"
-import RickAndMortyTitle from "@/components/RickAndMortyTitle"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs"
 import { AppRoutes } from "@/data/static"
 import { cn } from "@/utils"
 
+const RickAndMortyTitle = dynamic(
+  () => import("../components/RickAndMortyTitle")
+)
 const CharacterSearch = dynamic(() => import("../components/Character.Search"))
 const EpisodeSearch = dynamic(() => import("../components/Episode.Search"))
 const LocationSearch = dynamic(() => import("../components/Location.Search"))

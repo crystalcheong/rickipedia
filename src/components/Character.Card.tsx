@@ -1,3 +1,5 @@
+"use client"
+
 import { useAuth, useClerk } from "@clerk/nextjs"
 import { Bookmark, BookmarkPlus } from "lucide-react"
 import { useRouter } from "next/router"
@@ -17,16 +19,15 @@ import {
 import { NextImage } from "@/components/ui/Image"
 import { Separator } from "@/components/ui/Separator"
 import { type Favourite } from "@/data/db/favourites/schema"
-import { type Character, CharacterStatus } from "@/types/rickAndMorty"
+import { type Character } from "@/types/rickAndMorty"
 import { api, cn } from "@/utils"
 
-interface CharacterCardProps extends CardProps {
+type CharacterCardProps = CardProps & {
   character: Character
   isFavourite?: boolean
   disableOnClick?: boolean
   disableFavourite?: boolean
 }
-
 const CharacterCard = ({
   character,
   className,
@@ -173,7 +174,7 @@ const CharacterCard = ({
           {Object.keys(CharacterChangeFilters).map((name, idx) => {
             const key = name as keyof Character
             let attr = (character?.[key] ?? "") as string
-            if (attr === CharacterStatus.unknown) attr = "???"
+            if (attr === "unknown") attr = "???"
             const showSeperator = idx % 2 !== 0
             return (
               <Fragment key={`attr-${key}`}>

@@ -1,24 +1,23 @@
 import { Loader2 } from "lucide-react"
+import { block } from "million/react"
 import dynamic from "next/dynamic"
 import { type ComponentPropsWithoutRef, useCallback, useState } from "react"
 
+import { Button } from "@/components/ui/Button"
 import {
+  type Episode,
+  getDefaultSchemaPaginationStates,
   InitialPaginationStates,
   type PaginationType,
-  PaginationTypes,
-} from "@/components/Character.Search"
-import { Button } from "@/components/ui/Button"
-import { type Episode } from "@/types/rickAndMorty"
+} from "@/types/rickAndMorty"
 import { api, cn, logger } from "@/utils"
 
 const EpisodeTable = dynamic(() => import("./Episode.Table"))
 
-const InitialEpisodesStates: Record<PaginationType, Episode[]> =
-  Object.fromEntries(PaginationTypes.map((type) => [type, []]))
+const InitialEpisodesStates = getDefaultSchemaPaginationStates<Episode>()
 
 type EpisodeSearchProps = ComponentPropsWithoutRef<"main">
-
-const EpisodeSearch = ({ className, ...rest }: EpisodeSearchProps) => {
+const EpisodeSearch = block(({ className, ...rest }: EpisodeSearchProps) => {
   //#endregion  //*======== STATES ===========
 
   const [episodes, setEpisodes] = useState<typeof InitialEpisodesStates>(
@@ -72,7 +71,7 @@ const EpisodeSearch = ({ className, ...rest }: EpisodeSearchProps) => {
   const handleOnLoad = useCallback(() => {
     if (isLoadingEpisodes) return
 
-    const paginationType: keyof typeof paginations = currentPaginationType
+    const paginationType = currentPaginationType satisfies PaginationType
 
     logger({ breakpoint: "[index.tsx:129]" }, "EpisodeSearch/handleOnLoad", {
       isFirstQuery,
@@ -127,6 +126,6 @@ const EpisodeSearch = ({ className, ...rest }: EpisodeSearchProps) => {
       />
     </main>
   )
-}
+})
 
 export default EpisodeSearch

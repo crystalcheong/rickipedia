@@ -1,3 +1,4 @@
+import { For } from "million/react"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
 import { useState } from "react"
@@ -8,6 +9,7 @@ import { Badge } from "@/components/ui/Badge"
 import { RickAndMortyClient } from "@/data/clients/rickAndMorty"
 import { type Location } from "@/types/rickAndMorty"
 import { api, cn, getUniqueSetList } from "@/utils"
+
 const CharacterCard = dynamic(() => import("../../components/Character.Card"))
 
 const LocationIdPage = () => {
@@ -122,13 +124,18 @@ const LocationIdPage = () => {
               "sm:flex-row sm:flex-wrap"
             )}
           >
-            {charactersData.map((character) => (
-              <CharacterCard
-                key={character.id}
-                character={character}
-                className="shrink-0 snap-center snap-always"
-              />
-            ))}
+            <For
+              memo
+              each={charactersData ?? []}
+            >
+              {(character) => (
+                <CharacterCard
+                  key={character.id}
+                  character={character}
+                  className="shrink-0 snap-center snap-always"
+                />
+              )}
+            </For>
           </div>
         </section>
       </RenderGuard>

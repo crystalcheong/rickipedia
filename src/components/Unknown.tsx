@@ -1,3 +1,4 @@
+import { block } from "million/react"
 import { useRouter } from "next/router"
 import { type ReactNode } from "react"
 
@@ -7,56 +8,61 @@ import { cn } from "@/utils"
 
 import styles from "@/styles/unknown.module.css"
 
-interface Props {
+type UnknownProps = {
   statusCode?: number
   message?: string | ReactNode
   hideRedirect?: boolean
 }
-const Unknown = ({ statusCode = 0, message, hideRedirect = false }: Props) => {
-  const router = useRouter()
+const Unknown = block(
+  ({ statusCode = 0, message, hideRedirect = false }: UnknownProps) => {
+    const router = useRouter()
 
-  const isThreeDigitNumberWithZeroInMiddle = (number: number): boolean =>
-    number.toString().length === 3 && number.toString()[1] === "0"
+    const isThreeDigitNumberWithZeroInMiddle = (number: number): boolean =>
+      number.toString().length === 3 && number.toString()[1] === "0"
 
-  const isValidCode: boolean = isThreeDigitNumberWithZeroInMiddle(statusCode)
+    const isValidCode: boolean = isThreeDigitNumberWithZeroInMiddle(statusCode)
+    const displayedStatusCode = isValidCode ? statusCode : "???"
+    const displayedMessage = message ?? (
+      <>
+        The page you are trying to search has been <br /> moved to another
+        universe.
+      </>
+    )
 
-  return (
-    <section
-      className={cn(
-        "flex flex-col place-content-center place-items-center gap-4",
-        "transition-all",
-        "relative overflow-hidden"
-      )}
-    >
-      <aside className="space" />
-      <div
+    return (
+      <section
         className={cn(
-          styles.errCode,
           "flex flex-col place-content-center place-items-center gap-4",
-          "h-full max-h-full scale-50 sm:scale-100"
+          "transition-all",
+          "relative overflow-hidden"
         )}
       >
-        <span>{isValidCode ? statusCode : "???"}</span>
-        <p className="max-w-prose text-center">
-          {message ?? (
-            <>
-              The page you are trying to search has been <br /> moved to another
-              universe.
-            </>
+        <aside className="space" />
+        <div
+          className={cn(
+            styles.errCode,
+            "flex flex-col place-content-center place-items-center gap-4",
+            "h-full max-h-full"
           )}
-        </p>
+        >
+          <span>{displayedStatusCode}</span>
+          <p className="max-w-prose text-center text-xs sm:text-base">
+            {displayedMessage}
+          </p>
 
-        {!hideRedirect && (
           <Button
-            className="slime cursor-pointer font-semibold uppercase"
+            className={cn(
+              "slime cursor-pointer font-semibold uppercase",
+              hideRedirect && "hidden"
+            )}
             onClick={() => void router.push(AppRoutes.Home)}
           >
             Get me home
           </Button>
-        )}
-      </div>
-    </section>
-  )
-}
+        </div>
+      </section>
+    )
+  }
+)
 
 export default Unknown

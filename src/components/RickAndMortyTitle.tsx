@@ -1,14 +1,26 @@
+import { block } from "million/react"
 import Link from "next/link"
 import { Fragment } from "react"
+import { shallow } from "zustand/shallow"
 
 import { RenderGuard } from "@/components/providers"
 import { Separator } from "@/components/ui"
 import RollingNumbers from "@/components/ui/RollingNumbers"
+import { useAppStore } from "@/data/stores/app"
 import { api, cn } from "@/utils"
 import RickAndMortyLogo from "~/assets/RickAndMorty.svg"
 
-const RickAndMortyTitle = () => {
-  const { data: schemaLimits } = api.rickAndMorty.getSchemaLimits.useQuery()
+const RickAndMortyTitle = block(() => {
+  const [schemaLimits, updateSchemaLimits] = useAppStore(
+    (state) => [state.schemaLimits, state.updateSchemaLimits],
+    shallow
+  )
+
+  api.rickAndMorty.getSchemaLimits.useQuery(undefined, {
+    initialData: schemaLimits,
+    enabled: Object.values(schemaLimits).some((limit) => !limit),
+    onSuccess: (data) => updateSchemaLimits(data),
+  })
 
   return (
     <header className="flex flex-col gap-8">
@@ -52,6 +64,6 @@ const RickAndMortyTitle = () => {
       </RenderGuard>
     </header>
   )
-}
+})
 
 export default RickAndMortyTitle

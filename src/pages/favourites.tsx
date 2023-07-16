@@ -1,14 +1,12 @@
 import { useAuth, useClerk } from "@clerk/nextjs"
+import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
 import { useState } from "react"
 
 import { SignInTheme } from "@/components/Auth.SignIn"
-import CharacterCard from "@/components/Character.Card"
 import BaseLayout from "@/components/layouts/Layout.Base"
-import LocationCard from "@/components/Location.Card"
 import { RenderGuard } from "@/components/providers"
 import { Badge } from "@/components/ui"
-import Unknown from "@/components/Unknown"
 import { type Favourite } from "@/data/db/favourites/schema"
 import {
   type Character,
@@ -16,6 +14,10 @@ import {
   type SchemaType,
 } from "@/types/rickAndMorty"
 import { api, cn } from "@/utils"
+
+const Unknown = dynamic(() => import("../components/Unknown"))
+const CharacterCard = dynamic(() => import("../components/Character.Card"))
+const LocationCard = dynamic(() => import("../components/Location.Card"))
 
 const InitialFavouritesStates: Record<SchemaType, Favourite[]> = {
   character: [],
@@ -117,7 +119,6 @@ const FavouritesPage = () => {
                 key={character.id}
                 character={character}
                 isFavourite={characterIds.includes(character.id)}
-                className="shrink-0 snap-start last:mr-6"
               />
             ))}
           </div>

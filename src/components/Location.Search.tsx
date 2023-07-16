@@ -6,6 +6,7 @@ import {
   Filter,
   RotateCw,
 } from "lucide-react"
+import { block, For } from "million/react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import {
@@ -18,11 +19,6 @@ import {
   useState,
 } from "react"
 
-import {
-  InitialPaginationStates,
-  type PaginationType,
-  PaginationTypes,
-} from "@/components/Character.Search"
 import { RenderGuard } from "@/components/providers"
 import { Button } from "@/components/ui/Button"
 import {
@@ -41,8 +37,16 @@ import {
 import RollingNumbers from "@/components/ui/RollingNumbers"
 import { Toggle } from "@/components/ui/Toggle"
 import { type Favourite } from "@/data/db/favourites/schema"
-import { type Location, type PaginationInfo } from "@/types/rickAndMorty"
+import {
+  getDefaultSchemaPaginationStates,
+  InitialPaginationStates,
+  type Location,
+  type LocationFilterInfo,
+  type PaginationInfo,
+  type PaginationType,
+} from "@/types/rickAndMorty"
 import { api, cn, getUniqueSetList, logger } from "@/utils"
+
 const Unknown = dynamic(() => import("./Unknown"))
 const Loading = dynamic(() => import("./Loading"))
 const LocationCard = dynamic(() => import("./Location.Card"))
@@ -56,16 +60,13 @@ export const LocationChangeFilters: Record<string, string[]> = {
   dimension: ["Dimension C-137", "unknown"],
 }
 
-const InitialLocationsStates: Record<PaginationType, Location[]> =
-  Object.fromEntries(PaginationTypes.map((type) => [type, []]))
-
-const InitialSearchState: Partial<Location> = {
+const InitialLocationsStates = getDefaultSchemaPaginationStates<Location>()
+const InitialSearchState: LocationFilterInfo = {
   name: "",
 }
 
 type LocationSearchProps = ComponentPropsWithoutRef<"main">
-
-const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
+const LocationSearch = block(({ className, ...rest }: LocationSearchProps) => {
   const { userId } = useAuth()
 
   //#endregion  //*======== STATES ===========
@@ -162,12 +163,12 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
     })
     setLocations({
       ...locations,
-      [type]: InitialLocationsStates[type] as Location[],
+      [type]: InitialLocationsStates[type],
     })
   }
 
   const resetFilters = () => {
-    const paginationType: keyof typeof paginations = "search"
+    const paginationType = "search" satisfies PaginationType
     resetPagination({ type: paginationType })
 
     setSearchFilters(InitialSearchState)
@@ -193,7 +194,7 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
     // Check if value is blank / empty
     const isEmpty: boolean = !value || !hasFilters
     const isSearching = !isEmpty
-    const paginationType: keyof typeof paginations = "search"
+    const paginationType = "search" satisfies PaginationType
     if (isSearchChangeFilter && !value) value = undefined
     if (!isSearching) resetPagination({ type: paginationType })
 
@@ -256,7 +257,7 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
   const handleOnSearch = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const paginationType: keyof typeof paginations = "search"
+    const paginationType = "search" satisfies PaginationType
 
     logger({ breakpoint: "[index.tsx:65]" }, "CharacterSearch/handleOnSearch", {
       searchFilters,
@@ -478,18 +479,23 @@ const LocationSearch = ({ className, ...rest }: LocationSearchProps) => {
             "sm:grid-cols-2 lg:grid-cols-3"
           )}
         >
-          {(locations[currentPaginationType] ?? []).map((location) => (
-            <LocationCard
-              key={location.id}
-              location={location}
-              isFavourite={favouriteIds.includes(location.id)}
-            />
-          ))}
+          <For
+            memo
+            each={locations[currentPaginationType] ?? []}
+          >
+            {(location) => (
+              <LocationCard
+                key={location.id}
+                location={location}
+                isFavourite={(favouriteIds ?? []).includes(location.id)}
+              />
+            )}
+          </For>
         </section>
         <div ref={paginatedEndRef} />
       </RenderGuard>
     </main>
   )
-}
+})
 
 export default LocationSearch
