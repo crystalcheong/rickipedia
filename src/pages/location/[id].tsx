@@ -1,4 +1,3 @@
-import { For } from "million/react"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
 import { useState } from "react"
@@ -73,12 +72,12 @@ const LocationIdPage = () => {
           {locationsData.map((location) => {
             const dimension =
               !location.dimension ||
-              location.dimension.toUpperCase() === "unknown".toUpperCase()
+                location.dimension.toUpperCase() === "unknown".toUpperCase()
                 ? "???"
                 : location.dimension
             const type =
               !location.type ||
-              location.type.toUpperCase() === "unknown".toUpperCase()
+                location.type.toUpperCase() === "unknown".toUpperCase()
                 ? "???"
                 : location.type
 
@@ -124,18 +123,13 @@ const LocationIdPage = () => {
               "sm:flex-row sm:flex-wrap"
             )}
           >
-            <For
-              memo
-              each={charactersData ?? []}
-            >
-              {(character) => (
-                <CharacterCard
-                  key={character.id}
-                  character={character}
-                  className="shrink-0 snap-center snap-always"
-                />
-              )}
-            </For>
+            {(charactersData ?? []).map((character) => (
+              <CharacterCard
+                key={character.id}
+                character={character}
+                className="shrink-0 snap-center snap-always"
+              />
+            ))}
           </div>
         </section>
       </RenderGuard>
