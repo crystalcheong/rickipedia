@@ -53,7 +53,7 @@
     "@trpc/react-query": "^10.34.0",
     "@trpc/server": "^10.34.0",
     "@use-gesture/react": "^10.2.27",
-    "class-variance-authority": "^0.6.1",
+    "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "dotenv": "^16.3.1",
