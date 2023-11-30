@@ -18,6 +18,7 @@ import {
   useRef,
   useState,
 } from "react"
+import shallow from "zustand/shallow"
 
 import { RenderGuard } from "@/components/providers"
 import { Button } from "@/components/ui/Button"
@@ -37,6 +38,7 @@ import {
 import RollingNumbers from "@/components/ui/RollingNumbers"
 import { Toggle } from "@/components/ui/Toggle"
 import { type Favourite } from "@/data/db/favourites/schema"
+import { useAppStore } from "@/data/stores/app"
 import {
   getDefaultSchemaPaginationStates,
   InitialPaginationStates,
@@ -68,6 +70,14 @@ const InitialSearchState: LocationFilterInfo = {
 type LocationSearchProps = ComponentPropsWithoutRef<"main">
 const LocationSearch = block(({ className, ...rest }: LocationSearchProps) => {
   const { userId } = useAuth()
+
+  //#endregion  //*======== SERVER STATUS ===========
+  const [serverStatus, updateServerStatus] = useAppStore(
+    (state) => [state.server, state.updateServerStatus],
+    shallow
+  )
+  const isServerDown = !serverStatus.isDbActive
+  //#endregion  //*======== SERVER STATUS ===========
 
   //#endregion  //*======== STATES ===========
   const [favouriteIds, setFavouriteIds] = useState<Favourite["schemaId"][]>([])
@@ -138,7 +148,14 @@ const LocationSearch = block(({ className, ...rest }: LocationSearchProps) => {
     )
   api.favourites.getAll.useQuery(undefined, {
     initialData: [],
-    enabled: !!userId,
+    enabled: !!userId && !isServerDown,
+    onError: ({ data }) => {
+      // server down
+      if (data?.httpStatus === 500) {
+        serverStatus.isDbActive = false
+        updateServerStatus(serverStatus)
+      }
+    },
     onSuccess: (data) => {
       setFavouriteIds(
         data
@@ -487,7 +504,12 @@ const LocationSearch = block(({ className, ...rest }: LocationSearchProps) => {
               <LocationCard
                 key={location.id}
                 location={location}
-                isFavourite={(favouriteIds ?? []).includes(location.id)}
+                isFavourite={
+                  isServerDown
+                    ? false
+                    : (favouriteIds ?? []).includes(location.id)
+                }
+                disableFavourite={isServerDown}
               />
             )}
           </For>

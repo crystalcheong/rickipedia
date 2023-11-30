@@ -72,12 +72,12 @@ const LocationIdPage = () => {
           {locationsData.map((location) => {
             const dimension =
               !location.dimension ||
-                location.dimension.toUpperCase() === "unknown".toUpperCase()
+              location.dimension.toUpperCase() === "unknown".toUpperCase()
                 ? "???"
                 : location.dimension
             const type =
               !location.type ||
-                location.type.toUpperCase() === "unknown".toUpperCase()
+              location.type.toUpperCase() === "unknown".toUpperCase()
                 ? "???"
                 : location.type
 

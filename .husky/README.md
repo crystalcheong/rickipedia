@@ -2,4 +2,4 @@
 
 Example:
 
-npx husky add .husky/pre-push "pnpm typecheck"
+npx husky add .husky/pre-push "bun typecheck"

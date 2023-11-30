@@ -8,6 +8,20 @@
       "when": 1689265534968,
       "tag": "0000_quiet_pestilence",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1701355181197,
+      "tag": "0001_yummy_wendigo",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1701359494797,
+      "tag": "0002_friendly_frog_thor",
+      "breakpoints": true
     }
   ]
 }

@@ -21,6 +21,7 @@ import {
   useRef,
   useState,
 } from "react"
+import shallow from "zustand/shallow"
 
 import { SignInTheme } from "@/components/Auth.SignIn"
 import { RenderGuard } from "@/components/providers"
@@ -41,6 +42,7 @@ import {
 import RollingNumbers from "@/components/ui/RollingNumbers"
 import { Toggle } from "@/components/ui/Toggle"
 import { type Favourite } from "@/data/db/favourites/schema"
+import { useAppStore } from "@/data/stores/app"
 import {
   type Character,
   type CharacterFilterInfo,
@@ -75,6 +77,14 @@ const CharacterSearch = block(
     const router = useRouter()
     const { openSignIn } = useClerk()
     const { userId } = useAuth()
+
+    //#endregion  //*======== SERVER STATUS ===========
+    const [serverStatus, updateServerStatus] = useAppStore(
+      (state) => [state.server, state.updateServerStatus],
+      shallow
+    )
+    const isServerDown = !serverStatus.isDbActive
+    //#endregion  //*======== SERVER STATUS ===========
 
     //#endregion  //*======== STATES ===========
     const [favouriteIds, setFavouriteIds] = useState<Favourite["schemaId"][]>(
@@ -132,7 +142,14 @@ const CharacterSearch = block(
 
     api.favourites.getAll.useQuery(undefined, {
       initialData: [],
-      enabled: !!userId,
+      enabled: !!userId && !isServerDown,
+      onError: ({ data }) => {
+        // server down
+        if (data?.httpStatus === 500) {
+          serverStatus.isDbActive = false
+          updateServerStatus(serverStatus)
+        }
+      },
       onSuccess: (data) => {
         setFavouriteIds(
           data
@@ -498,6 +515,7 @@ const CharacterSearch = block(
                   character={character}
                   isFavourite={(favouriteIds ?? []).includes(character.id)}
                   tilt
+                  disableFavourite={isServerDown}
                 />
               )}
             </For>

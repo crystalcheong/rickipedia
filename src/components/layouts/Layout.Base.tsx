@@ -17,8 +17,10 @@ import { RenderGuard } from "@/components/providers"
 import ThemeSwitch from "@/components/Theme.Switch"
 import { Button, NextImage } from "@/components/ui"
 import { Toaster } from "@/components/ui/Toaster"
+import { useToast } from "@/components/ui/use-toast"
 import { AppRoutes, ExternalLinks } from "@/data/static"
-import { AppVersion } from "@/data/static/app"
+import { AppStatus, AppVersion, ToastStatus } from "@/data/static/app"
+import { useAppStore } from "@/data/stores/app"
 import { cn } from "@/utils"
 
 interface SlimePortalProps extends PropsWithChildren {
@@ -92,7 +94,10 @@ const BaseLayout = ({
   seo,
   ...rest
 }: BaseLayoutProps) => {
+  const { toast } = useToast()
   const { asPath } = useRouter()
+
+  //#endregion  //*======== AUTH PROMPT ===========
   const { openSignIn } = useClerk()
 
   const handleSignIn = () => {
@@ -101,6 +106,17 @@ const BaseLayout = ({
       appearance: SignInTheme,
     })
   }
+  //#endregion  //*======== AUTH PROMPT ===========
+
+  //#endregion  //*======== SERVER STATUS ===========
+  const serverStatus = useAppStore().server
+  const isServerDown = !serverStatus.isDbActive
+
+  useEffect(() => {
+    if (isServerDown) toast(ToastStatus[AppStatus.SERVER_DOWN])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isServerDown])
+  //#endregion  //*======== SERVER STATUS ===========
 
   return (
     <>

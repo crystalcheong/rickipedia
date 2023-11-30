@@ -9,13 +9,16 @@ import { CharacterChangeFilters } from "@/components/Character.Search"
 import { Button } from "@/components/ui"
 import { NextImage } from "@/components/ui/Image"
 import { Separator } from "@/components/ui/Separator"
+import { useToast } from "@/components/ui/use-toast"
 import { type Favourite } from "@/data/db/favourites/schema"
+import { AppStatus, ToastStatus } from "@/data/static/app"
 import { type Character } from "@/types/rickAndMorty"
 import { api, cn } from "@/utils"
 
 type CharacterDetailProps = ComponentPropsWithoutRef<"section"> & {
   character: Character
   isFavourite?: boolean
+  hideFavourite?: boolean
   disableFavourite?: boolean
 }
 
@@ -24,6 +27,7 @@ const CharacterDetail = block(
     character,
     className,
     isFavourite = false,
+    hideFavourite = false,
     disableFavourite = false,
     ...rest
   }: CharacterDetailProps) => {
@@ -32,6 +36,7 @@ const CharacterDetail = block(
     const origin =
       character.origin.name === "unknown" ? "???" : character.origin.name
 
+    const { toast } = useToast()
     const router = useRouter()
     const { openSignIn } = useClerk()
     const { userId } = useAuth()
@@ -57,6 +62,11 @@ const CharacterDetail = block(
           redirectUrl: router.asPath,
           appearance: SignInTheme,
         })
+
+      if (disableFavourite) {
+        toast(ToastStatus[AppStatus.FEATURE_UNAVAILABLE])
+        return
+      }
 
       const params: Pick<Favourite, "schemaId" | "schemaType"> = {
         schemaType: "character",
@@ -156,11 +166,15 @@ const CharacterDetail = block(
             })}
           </div>
 
-          {!disableFavourite && (
+          {!hideFavourite && (
             <Button
               variant={favourite ? "default" : "outline"}
               onClick={handleToggleFavourite}
-              className={cn("mt-6 gap-2", favourite && "rick dark:slime")}
+              className={cn(
+                "mt-6 gap-2",
+                favourite && "rick dark:slime",
+                disableFavourite && "cursor-not-allowed"
+              )}
             >
               <FavouriteIcon className="h-4 w-4" />
               Favourite

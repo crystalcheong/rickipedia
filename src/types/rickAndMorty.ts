@@ -96,11 +96,11 @@ export type Episode = z.infer<typeof Episode>
 export type ExtendedBaseSchema<T extends BaseSchema | Partial<BaseSchema>> = T &
   Partial<BaseSchema>
 export type SchemaPaginationStates<
-  T extends Partial<BaseSchema | ExtendedBaseSchema<BaseSchema>>
+  T extends Partial<BaseSchema | ExtendedBaseSchema<BaseSchema>>,
 > = Record<PaginationType, T[]>
 
 export const getDefaultSchemaPaginationStates = <
-  T extends Partial<BaseSchema | ExtendedBaseSchema<BaseSchema>>
+  T extends Partial<BaseSchema | ExtendedBaseSchema<BaseSchema>>,
 >(): SchemaPaginationStates<T> =>
   Object.fromEntries(
     PaginationTypes.map((type) => [type, [] as T[]])

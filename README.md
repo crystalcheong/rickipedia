@@ -32,7 +32,7 @@
 ```bash
 git clone git@github.com:crystalcheong/rickipedia.git
 cd rickipedia
-pnpm install && pnpm dev
+bun install && bun --bun run dev
 ```
 
 > View <a href="http://localhost:3000/api/trpc" target="_blank">TRPC routes</a> at `/api/trpc`

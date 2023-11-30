@@ -41,6 +41,7 @@ type Action =
   | {
       type: ActionType["DISMISS_TOAST"]
       toastId?: ToasterToast["id"]
+      persist?: boolean
     }
   | {
       type: ActionType["REMOVE_TOAST"]
@@ -53,12 +54,14 @@ interface State {
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
 
-const addToRemoveQueue = (toastId: string) => {
+const addToRemoveQueue = (toastId: string, persist?: boolean) => {
   if (toastTimeouts.has(toastId)) {
     return
   }
 
   const timeout = setTimeout(() => {
+    if (persist) return
+
     toastTimeouts.delete(toastId)
     dispatch({
       type: "REMOVE_TOAST",
@@ -86,15 +89,15 @@ export const reducer = (state: State, action: Action): State => {
       }
 
     case "DISMISS_TOAST": {
-      const { toastId } = action
+      const { toastId, persist = false } = action
 
       // ! Side effects ! - This could be extracted into a dismissToast() action,
       // but I'll keep it here for simplicity
       if (toastId) {
-        addToRemoveQueue(toastId)
+        addToRemoveQueue(toastId, persist)
       } else {
         state.toasts.forEach((toast) => {
-          addToRemoveQueue(toast.id)
+          addToRemoveQueue(toast.id, persist)
         })
       }
 
@@ -135,9 +138,11 @@ function dispatch(action: Action) {
   })
 }
 
-type Toast = Omit<ToasterToast, "id">
+export type Toast = Omit<ToasterToast, "id"> & {
+  persist?: boolean
+}
 
-function toast({ ...props }: Toast) {
+function toast({ persist = false, ...props }: Toast) {
   const id = genId()
 
   const update = (props: ToasterToast) =>
@@ -145,7 +150,8 @@ function toast({ ...props }: Toast) {
       type: "UPDATE_TOAST",
       toast: { ...props, id },
     })
-  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
+  const dismiss = () =>
+    dispatch({ type: "DISMISS_TOAST", toastId: id, persist })
 
   dispatch({
     type: "ADD_TOAST",
