@@ -43,6 +43,8 @@ const FavouritesPage = () => {
   const characterIds = favourites.character.map(({ schemaId }) => schemaId)
   const locationIds = favourites.location.map(({ schemaId }) => schemaId)
 
+  const isFavouritesEmpty = !characters.length && !locations.length
+
   const [serverStatus, updateServerStatus] = useAppStore(
     (state) => [state.server, state.updateServerStatus],
     shallow
@@ -122,7 +124,7 @@ const FavouritesPage = () => {
         <aside
           className={cn(
             "hidden",
-            isServerDown &&
+            (isServerDown || isFavouritesEmpty) &&
               cn(
                 "flex flex-col place-content-center place-items-center gap-4",
                 "fixed inset-0 z-30",
@@ -133,12 +135,20 @@ const FavouritesPage = () => {
           <Unknown
             hideRedirect
             message={
-              <>
-                Ah jeez, the server&apos;s just, you know, having a little
-                downtime.
-                <br />
-                It&apos;ll be back, like, pronto.
-              </>
+              isFavouritesEmpty ? (
+                <>
+                  No favourites yet, huh?
+                  <br />
+                  Keep exploring
+                </>
+              ) : (
+                <>
+                  Ah jeez, the server&apos;s just, you know, having a little
+                  downtime.
+                  <br />
+                  It&apos;ll be back, like, pronto.
+                </>
+              )
             }
           />
         </aside>
@@ -157,7 +167,7 @@ const FavouritesPage = () => {
                 "flex flex-row flex-nowrap place-items-center gap-5"
               )}
             >
-              {isServerDown
+              {isServerDown || !characters.length
                 ? Array(5)
                     .fill(false)
                     .map((_, idx) => (
@@ -191,7 +201,7 @@ const FavouritesPage = () => {
                 "flex flex-row flex-nowrap place-items-center gap-5"
               )}
             >
-              {isServerDown
+              {isServerDown || !locations.length
                 ? Array(5)
                     .fill(false)
                     .map((_, idx) => (
